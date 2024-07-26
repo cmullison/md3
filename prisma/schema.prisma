@@ -1,0 +1,132 @@
+datasource db {
+  provider     = "postgresql"
+  url          = env("DATABASE_URL")
+  directUrl    = env("DIRECT_URL")
+  relationMode = "prisma"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Site {
+  id         String     @id @default(uuid()) @map("_id")
+  name       String
+  userId     String
+  heroes     Hero[]     @relation("SiteToHero")
+  categories Category[] @relation("SiteToCategory")
+  sizes      Size[]     @relation("SiteToSize")
+  products   Product[]  @relation("SiteToProduct")
+  orders     Order[]    @relation("SiteToOrder")
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+}
+
+model Profile {
+  id         String   @id @default(uuid()) @map("_id")
+  first_name String
+  last_name  String
+  email      String
+  userId     String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Hero {
+  id         String     @id @default(uuid())
+  siteId     String
+  site       Site       @relation("SiteToHero", fields: [siteId], references: [id])
+  label      String
+  imageUrl   String
+  categories Category[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@index([siteId])
+}
+
+model Category {
+  id        String    @id @default(uuid())
+  siteId    String
+  site      Site      @relation("SiteToCategory", fields: [siteId], references: [id])
+  heroId    String
+  hero      Hero      @relation(fields: [heroId], references: [id])
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  products  Product[] @relation("CategoryToProduct")
+
+  @@index([siteId])
+  @@index([heroId])
+}
+
+model Size {
+  id        String    @id @default(uuid()) @map("_id")
+  siteId    String
+  site      Site      @relation("SiteToSize", fields: [siteId], references: [id])
+  products  Product[]
+  name      String
+  value     String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([siteId])
+}
+
+model Product {
+  id         String      @id @default(uuid()) @map("_id")
+  siteId     String
+  site       Site        @relation("SiteToProduct", fields: [siteId], references: [id])
+  categoryId String
+  category   Category    @relation("CategoryToProduct", fields: [categoryId], references: [id])
+  name       String
+  price      Float // This was Decimal in mysql
+  isFeatured Boolean     @default(false)
+  isArchived Boolean     @default(false)
+  sizeId     String
+  size       Size        @relation(fields: [sizeId], references: [id])
+  images     Image[]
+  orderItems OrderItem[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@index([siteId])
+  @@index([categoryId])
+  @@index([sizeId])
+}
+
+model OrderItem {
+  id        String  @id @default(uuid()) @map("_id")
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model Order {
+  id         String      @id @default(uuid()) @map("_id")
+  siteId     String
+  site       Site        @relation("SiteToOrder", fields: [siteId], references: [id])
+  orderItems OrderItem[]
+  isPaid     Boolean     @default(false)
+  phone      String      @default("")
+  address    String      @default("")
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@index([siteId])
+}
+
+model Image {
+  id        String   @id @default(uuid()) @map("_id")
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId])
+}
