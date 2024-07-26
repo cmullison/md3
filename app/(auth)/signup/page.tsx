@@ -148,7 +148,7 @@ export default function Signup({
           formAction={signUp}
           className="bg-secondary rounded-md px-4 py-2 text-primary mb-2"
           pendingText="Signing Up..."
-          //disabled
+          disabled
         >
           Sign Up
         </SubmitButton>
