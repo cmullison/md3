@@ -42,7 +42,7 @@ export default async function RootLayout({
             <Image
               className=""
               src="/logo-1.png"
-              alt="Mulls Logo"
+              alt="Mulls logo"
               width={360}
               height={75}
               priority
