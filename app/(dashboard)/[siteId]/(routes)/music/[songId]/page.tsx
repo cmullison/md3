@@ -1,14 +1,14 @@
 import prismadb from "@/lib/prismadb";
 import { SongForm } from "./components/song-form";
 
-const SizePage = async ({
+const SongPage = async ({
   params,
 }: {
-  params: { sizeId: string; siteId: string };
+  params: { songId: string; siteId: string };
 }) => {
   const size = await prismadb.music.findUnique({
     where: {
-      id: params.sizeId,
+      id: params.songId,
       // id: params.siteId,
     },
   });
@@ -21,4 +21,4 @@ const SizePage = async ({
   );
 };
 
-export default SizePage;
+export default SongPage;
