@@ -2,6 +2,7 @@ import prismadb from "@/lib/prismadb";
 import { redirect } from "next/navigation";
 import { SettingsForm } from "./components/settings-form";
 import { createClient } from "@/utils/supabase/server";
+import { signOut } from "@/app/actions";
 
 interface SettingsPageProps {
   params: {

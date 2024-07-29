@@ -1,15 +1,25 @@
-import { useProfile } from "@/providers/profile-provider"; // Adjust the import path accordingly
-import { redirect, useParams } from "next/navigation";
+import { useProfile } from "@/providers/profile-provider";
+import { useParams } from "next/navigation";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { signOut } from "@/app/actions";
 import Link from "next/link";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { UserIcon, LogOut } from "lucide-react";
 
 const AuthButtonClient = () => {
   const profile = useProfile();
   const params = useParams();
+
   if (!profile) {
-    return redirect("/");
+    return null; // Instead of redirecting, we'll just return null
   }
+
   function getInitials(firstName: string, lastName: string): string {
     const firstInitial = firstName ? firstName.charAt(0).toUpperCase() : "";
     const lastInitial = lastName ? lastName.charAt(0).toUpperCase() : "";
@@ -19,22 +29,32 @@ const AuthButtonClient = () => {
   const initials = getInitials(profile.first_name, profile.last_name);
 
   return (
-    <div className="flex flex-col items-center lg:flex-row lg:gap-4">
-      <div className="flex flex-col items-center lg:flex-row lg:gap-4">
-        <Link href={`/${params.siteId}/chat`}>
-          <Avatar className="w-12 h-12">
+    <div className="flex flex-row items-center lg:flex-row lg:gap-4">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Avatar className="w-12 h-12 cursor-pointer">
             <AvatarFallback className="flex items-center justify-center">
               {initials}
             </AvatarFallback>
           </Avatar>
-        </Link>
-        <span className="hidden mt-2 flex-shrink-0 lg:mt-0 text-sm font-medium"></span>
-      </div>
-      <form action={signOut}>
-        <button className="mt-2 lg:mt-0 py-2 px-4 text-sm rounded-md no-underline bg-btn-background hover:bg-btn-background-hover">
-          Logout
-        </button>
-      </form>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem asChild>
+            <Link href="#edit-profile">
+              <UserIcon className="mr-2 h-4 w-4" />
+              <span>Edit Profile</span>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => signOut()}>
+            <LogOut className="mr-2 h-4 w-4" />
+            <span>Log out</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <span className="hidden mt-2 flex-shrink-0 lg:mt-0 text-sm font-medium">
+        {profile.first_name} {profile.last_name}
+      </span>
     </div>
   );
 };

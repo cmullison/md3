@@ -24,6 +24,7 @@ import { AlertModal } from "@/components/modals/alert-modal";
 import { ApiAlert } from "@/components/ui/api-alert";
 import { useOrigin } from "@/hooks/use-origin";
 import { Site } from "@prisma/client";
+import { signOut } from "@/app/actions";
 
 interface SettingsFormProps {
   initialData: Site;
@@ -125,7 +126,6 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({ initialData }) => {
           </Button>
         </form>
       </Form>
-
       <Separator />
       <ApiAlert
         title="NEXT_PUBLIC_API_URL"

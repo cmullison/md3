@@ -96,13 +96,16 @@ export function MainNav({
         </div>
       </div>
 
-      <div className="ml-auto lg:hidden">
+      <div className="hidden ml-auto lg:hidden">
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="p-2 text-gray-500 hover:text-gray-600"
         >
           {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
+      </div>
+      <div className="ml-auto pl-1 lg:hidden">
+        <AuthButtonClient />
       </div>
       {isOpen && (
         <div className="absolute left-0 right-0 top-16 z-100 h-full bg-background shadow-md lg:hidden">

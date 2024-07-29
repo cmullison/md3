@@ -5,6 +5,9 @@ import { MainNav } from "./main-nav";
 import { ThemeToggle } from "@/components/nav/theme-toggle";
 import prismadb from "@/lib/prismadb";
 import { Site } from "@prisma/client";
+import PageSwitcher from "./page-switcher";
+import { useParams, usePathname } from "next/navigation";
+import AuthButtonClient from "./auth-button-client";
 
 async function getSitesForUser(userId: string): Promise<Site[]> {
   try {
@@ -34,6 +37,8 @@ const Navbar = async () => {
       <nav className="border-b px-4 mx-auto sticky top-0 z-10 bg-background">
         <div className="flex h-16 w-full justify-start items-center">
           <SiteSwitcher items={sites} />
+          <div className="lg:hidden p-2">/</div>
+          <PageSwitcher className="lg:hidden" />
           <MainNav />
         </div>
       </nav>
