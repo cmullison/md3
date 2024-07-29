@@ -17,7 +17,7 @@ export async function GET (
                 id: params.categoryId,
             },
             include: {
-                hero: true
+                image: true
             }
         })
 
@@ -45,7 +45,7 @@ export async function PATCH (
 
         const body = await req.json();
 
-        const { name, heroId } = body;
+        const { name, imageId } = body;
 
         if(!user) {
             return new NextResponse("Unauthenticated", {status: 401})
@@ -55,8 +55,8 @@ export async function PATCH (
             return new NextResponse("Name is required", {status: 400})
         }
 
-        if(!heroId) {
-            return new NextResponse("Hero id is required", {status: 400})
+        if(!imageId) {
+            return new NextResponse("Image id is required", {status: 400})
         }
 
         if(!params.categoryId) {
@@ -80,7 +80,7 @@ export async function PATCH (
             },
             data: {
                 name,
-                heroId
+                imageId
             }
         })
 

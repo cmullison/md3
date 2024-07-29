@@ -1,12 +1,12 @@
 import prismadb from "@/lib/prismadb";
-import { SizeForm } from "./components/song-form";
+import { SongForm } from "./components/song-form";
 
 const SizePage = async ({
   params,
 }: {
   params: { sizeId: string; siteId: string };
 }) => {
-  const size = await prismadb.size.findUnique({
+  const size = await prismadb.music.findUnique({
     where: {
       id: params.sizeId,
       // id: params.siteId,
@@ -15,7 +15,7 @@ const SizePage = async ({
   return (
     <div className="flex-col">
       <div className="flex-1 space-y-4 p-8 pt-6">
-        <SizeForm initialData={size} />
+        <SongForm initialData={size} />
       </div>
     </div>
   );

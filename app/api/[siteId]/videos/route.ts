@@ -25,7 +25,7 @@ export async function POST (
         
         const body = await req.json();
 
-        const { label, imageUrl } = body;
+        const { label, imageUrl, title } = body;
 
         if(!user) {
             return new NextResponse("Unauthenticated", {status: 401})
@@ -54,9 +54,10 @@ export async function POST (
             return new NextResponse("Unauthorized", {status: 403})
         }
 
-        const hero = await prismadb.hero.create({
+        const hero = await prismadb.video.create({
             data: {
                 label, 
+                title,
                 imageUrl, 
                 siteId: params.siteId
             }
@@ -65,7 +66,7 @@ export async function POST (
         return NextResponse.json(hero);
 
     } catch (error) {
-        console.log('[HEROES_POST]', error)
+        console.log('[VIDEOS_POST]', error)
         return new NextResponse("Internal error", {status: 500})
     }
 }
@@ -80,7 +81,7 @@ export async function GET (
             return new NextResponse("Site id is required", {status: 400})
         }
 
-        const heroes = await prismadb.hero.findMany({
+        const heroes = await prismadb.video.findMany({
             where: {
                 siteId: params.siteId
             }
@@ -89,7 +90,7 @@ export async function GET (
         return NextResponse.json(heroes);
 
     } catch (error) {
-        console.log('[HEROES_GET]', error)
+        console.log('[VIDEOS_GET]', error)
         return new NextResponse("Internal error", {status: 500})
     }
 }

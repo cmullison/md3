@@ -66,9 +66,8 @@ export async function POST(
         isFeatured,
         isArchived,
         categoryId,
-        sizeId,
         siteId: params.siteId,
-        images: {
+        productImages: {
           createMany: {
             data: [
               ...images.map((image: { url: string }) => image),
@@ -103,14 +102,12 @@ export async function GET(
       where: {
         siteId: params.siteId,
         categoryId,
-        sizeId,
         isFeatured: isFeatured ? true : undefined,
         isArchived: false,
       },
       include: {
-        images: true,
+        productImages: true,
         category: true,
-        size: true,
       },
       orderBy: {
         createdAt: 'desc',

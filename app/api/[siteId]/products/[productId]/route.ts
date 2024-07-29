@@ -17,9 +17,8 @@ export async function GET(
         id: params.productId
       },
       include: {
-        images: true,
+        productImages: true,
         category: true,
-        size: true,
       }
     });
   
@@ -140,8 +139,7 @@ export async function PATCH(
         name,
         price,
         categoryId,
-        sizeId,
-        images: {
+        productImages: {
           deleteMany: {},
         },
         isFeatured,
@@ -154,7 +152,7 @@ export async function PATCH(
         id: params.productId
       },
       data: {
-        images: {
+        productImages: {
           createMany: {
             data: [
               ...images.map((image: { url: string }) => image),
