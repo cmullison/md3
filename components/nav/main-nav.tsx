@@ -15,7 +15,6 @@ export function MainNav({
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const params = useParams();
-  const [isVisible, setIsVisible] = useState(true);
   const routes = [
     {
       href: `/${params.siteId}`,
@@ -23,19 +22,29 @@ export function MainNav({
       active: pathname === `/${params.siteId}`,
     },
     {
-      href: `/${params.siteId}/heroes`,
-      label: "Heroes",
-      active: pathname === `/${params.siteId}/heroes`,
+      href: `/${params.siteId}/images`,
+      label: "Images",
+      active: pathname === `/${params.siteId}/images`,
     },
     {
-      href: `/${params.siteId}/categories`,
-      label: "Categories",
-      active: pathname === `/${params.siteId}/categories`,
+      href: `/${params.siteId}/videos`,
+      label: "Videos",
+      active: pathname === `/${params.siteId}/videos`,
     },
     {
-      href: `/${params.siteId}/sizes`,
-      label: "Sizes",
-      active: pathname === `/${params.siteId}/sizes`,
+      href: `/${params.siteId}/music`,
+      label: "Music",
+      active: pathname === `/${params.siteId}/music`,
+    },
+    {
+      href: `/${params.siteId}/pages`,
+      label: "Pages",
+      active: pathname === `/${params.siteId}/pages`,
+    },
+    {
+      href: `/${params.siteId}/blog`,
+      label: "Blog",
+      active: pathname === `/${params.siteId}/blog`,
     },
     {
       href: `/${params.siteId}/products`,

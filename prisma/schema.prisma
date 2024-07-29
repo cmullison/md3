@@ -14,9 +14,13 @@ model Site {
   id         String     @id @default(uuid()) @map("_id")
   name       String
   userId     String
-  heroes     Hero[]     @relation("SiteToHero")
+  pages      Page[]     @relation("SiteToPage")
+  music      Music[]    @relation("SiteToMusic")
+  images     Image[]    @relation("SiteToImage")
+  chat       Chat[]     @relation("SiteToChat")
+  blog       Blog[]     @relation("SiteToBlog")
+  videos     Video[]    @relation("SiteToVideo")
   categories Category[] @relation("SiteToCategory")
-  sizes      Size[]     @relation("SiteToSize")
   products   Product[]  @relation("SiteToProduct")
   orders     Order[]    @relation("SiteToOrder")
   createdAt  DateTime   @default(now())
@@ -33,10 +37,35 @@ model Profile {
   updatedAt  DateTime @updatedAt
 }
 
-model Hero {
+model Chat {
+  id        String   @id @default(uuid())
+  siteId    String
+  site      Site     @relation("SiteToChat", fields: [siteId], references: [id])
+  label     String
+  imageUrl  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([siteId])
+}
+
+model Music {
+  id        String   @id @default(uuid())
+  siteId    String
+  site      Site     @relation("SiteToMusic", fields: [siteId], references: [id])
+  label     String
+  title     String
+  songUrl   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([siteId])
+}
+
+model Image {
   id         String     @id @default(uuid())
   siteId     String
-  site       Site       @relation("SiteToHero", fields: [siteId], references: [id])
+  site       Site       @relation("SiteToImage", fields: [siteId], references: [id])
   label      String
   imageUrl   String
   categories Category[]
@@ -46,54 +75,76 @@ model Hero {
   @@index([siteId])
 }
 
+model Blog {
+  id        String   @id @default(uuid())
+  siteId    String
+  site      Site     @relation("SiteToBlog", fields: [siteId], references: [id])
+  label     String
+  title     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([siteId])
+}
+
+model Page {
+  id        String   @id @default(uuid())
+  siteId    String
+  site      Site     @relation("SiteToPage", fields: [siteId], references: [id])
+  label     String
+  title     String
+  imageUrl  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([siteId])
+}
+
+model Video {
+  id        String   @id @default(uuid())
+  siteId    String
+  site      Site     @relation("SiteToVideo", fields: [siteId], references: [id])
+  label     String
+  title     String
+  imageUrl  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([siteId])
+}
+
 model Category {
   id        String    @id @default(uuid())
   siteId    String
   site      Site      @relation("SiteToCategory", fields: [siteId], references: [id])
-  heroId    String
-  hero      Hero      @relation(fields: [heroId], references: [id])
+  imageId   String
+  image     Image     @relation(fields: [imageId], references: [id])
   name      String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   products  Product[] @relation("CategoryToProduct")
 
   @@index([siteId])
-  @@index([heroId])
-}
-
-model Size {
-  id        String    @id @default(uuid()) @map("_id")
-  siteId    String
-  site      Site      @relation("SiteToSize", fields: [siteId], references: [id])
-  products  Product[]
-  name      String
-  value     String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-
-  @@index([siteId])
+  @@index([imageId])
 }
 
 model Product {
-  id         String      @id @default(uuid()) @map("_id")
-  siteId     String
-  site       Site        @relation("SiteToProduct", fields: [siteId], references: [id])
-  categoryId String
-  category   Category    @relation("CategoryToProduct", fields: [categoryId], references: [id])
-  name       String
-  price      Float // This was Decimal in mysql
-  isFeatured Boolean     @default(false)
-  isArchived Boolean     @default(false)
-  sizeId     String
-  size       Size        @relation(fields: [sizeId], references: [id])
-  images     Image[]
-  orderItems OrderItem[]
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  id            String         @id @default(uuid()) @map("_id")
+  siteId        String
+  site          Site           @relation("SiteToProduct", fields: [siteId], references: [id])
+  categoryId    String
+  category      Category       @relation("CategoryToProduct", fields: [categoryId], references: [id])
+  name          String
+  price         Float // This was Decimal in mysql
+  isFeatured    Boolean        @default(false)
+  isArchived    Boolean        @default(false)
+  productImages ProductImage[]
+  orderItems    OrderItem[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 
   @@index([siteId])
   @@index([categoryId])
-  @@index([sizeId])
 }
 
 model OrderItem {
@@ -121,7 +172,7 @@ model Order {
   @@index([siteId])
 }
 
-model Image {
+model ProductImage {
   id        String   @id @default(uuid()) @map("_id")
   productId String
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)

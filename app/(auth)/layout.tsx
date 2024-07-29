@@ -1,4 +1,3 @@
-import { ThemeProvider } from "@/providers/theme-provider";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
