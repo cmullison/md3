@@ -9,9 +9,8 @@ import { createClient } from "@supabase/supabase-js";
 import { v4 as uuidv4 } from "uuid";
 import { Input } from "./input";
 
-const supabaseUrl = "https://hephebyszkkaamlckwjm.supabase.co";
-const supabaseKey =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhlcGhlYnlzemtrYWFtbGNrd2ptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTk2ODc1MDIsImV4cCI6MjAzNTI2MzUwMn0.PJxTnc1YiY64pe4jr3XCLrsQDyxCFHAdQuM3M6tR_FU";
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 interface ImageUploadProps {
