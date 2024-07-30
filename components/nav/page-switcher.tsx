@@ -46,7 +46,11 @@ export default function PageSwitcher({ className }: PageSwitcherProps) {
     { href: `/${params.siteId}/settings`, label: "Settings" },
   ];
 
-  const currentPage = routes.find((route) => route.href === pathname);
+  const currentPage = routes.find(
+    (route) =>
+      pathname === route.href ||
+      (pathname.startsWith(route.href) && route.href !== `/${params.siteId}`)
+  );
 
   const [open, setOpen] = React.useState(false);
 
@@ -86,7 +90,9 @@ export default function PageSwitcher({ className }: PageSwitcherProps) {
                   <Check
                     className={cn(
                       "ml-auto h-4 w-4",
-                      pathname === page.href ? "opacity-100" : "opacity-0"
+                      currentPage?.href === page.href
+                        ? "opacity-100"
+                        : "opacity-0"
                     )}
                   />
                 </CommandItem>

@@ -8,6 +8,7 @@ import { ImagePlus, Trash } from "lucide-react";
 import { createClient } from "@supabase/supabase-js";
 import { v4 as uuidv4 } from "uuid";
 import { Input } from "./input";
+import Link from "next/link";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -81,12 +82,14 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                 <Trash className="h-4 w-4" />
               </Button>
             </div>
-            <Image
-              fill
-              src={imgSrc}
-              alt={`Uploaded ${index}`}
-              className="object-cover"
-            />
+            <Link target="blank" href={imgSrc}>
+              <Image
+                fill
+                src={imgSrc}
+                alt={`Uploaded ${index}`}
+                className="object-cover"
+              />
+            </Link>
           </div>
         ))}
       </div>

@@ -62,7 +62,11 @@ export function MainNav({
       active: pathname === `/${params.siteId}/settings`,
     },
   ];
-
+  const currentPage = routes.find(
+    (route) =>
+      pathname === route.href ||
+      (pathname.startsWith(route.href) && route.href !== `/${params.siteId}`)
+  );
   return (
     <div
       className={cn("flex flex-grow lg:justify-between", className)}
@@ -76,8 +80,8 @@ export function MainNav({
               href={route.href}
               className={cn(
                 "text-sm font-medium transition-colors hover:text-primary",
-                route.active
-                  ? "text-black dark:text-white"
+                currentPage?.href === route.href
+                  ? "text-amber-300 dark:text-white"
                   : "text-muted-foreground"
               )}
             >
@@ -87,15 +91,11 @@ export function MainNav({
         </div>
 
         <div className="flex space-x-4 items-center">
-          <div className="pr-1">
-            <ThemeToggle />
-          </div>
           <div className="">
             <AuthButtonClient />
           </div>
         </div>
       </div>
-
       <div className="hidden ml-auto lg:hidden">
         <button
           onClick={() => setIsOpen(!isOpen)}
@@ -120,7 +120,7 @@ export function MainNav({
                 href={route.href}
                 className={cn(
                   "block px-4 py-2 text-sm font-medium transition-colors hover:text-primary",
-                  route.active
+                  currentPage?.href === route.href
                     ? "text-black dark:text-white"
                     : "text-muted-foreground"
                 )}

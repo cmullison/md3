@@ -25,6 +25,13 @@ import { ApiAlert } from "@/components/ui/api-alert";
 import { useOrigin } from "@/hooks/use-origin";
 import { Site } from "@prisma/client";
 import { signOut } from "@/app/actions";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 interface SettingsFormProps {
   initialData: Site;
@@ -40,6 +47,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({ initialData }) => {
   const params = useParams();
   const router = useRouter();
   const origin = useOrigin();
+  const [isApiListOpen, setIsApiListOpen] = useState(false);
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -87,51 +95,66 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({ initialData }) => {
         onConfirm={onDelete}
         loading={loading}
       />
-      <div className="flex items-center justify-between">
-        <Heading title="Settings" description="Manage site preferences" />
+      <div className="space-y-6 p-4">
+        <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between">
+          <Heading title="Settings" description="Manage site preferences" />
 
-        <Button variant="destructive" size="sm" onClick={() => setOpen(true)}>
-          <Trash className="h-4 w-4" />
-        </Button>
-      </div>
-      <Separator />
-
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-8 w-full"
-        >
-          <div className="grid grid-cols-3 gap-8">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Site name"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <Button disabled={loading} className="ml-auto" type="submit">
-            Save Changes
+          <Button variant="destructive" size="sm" onClick={() => setOpen(true)}>
+            <Trash className="h-4 w-4" />
           </Button>
-        </form>
-      </Form>
-      <Separator />
-      <ApiAlert
-        title="NEXT_PUBLIC_API_URL"
-        description={`${origin}/api/${params.siteId}`}
-        variant="public"
-      />
+        </div>
+        <Separator />
+
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-8 w-full"
+          >
+            <div className="grid grid-cols-3 gap-8">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={loading}
+                        placeholder="Site name"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <Button disabled={loading} className="ml-auto" type="submit">
+              Save Changes
+            </Button>
+          </form>
+        </Form>
+        <Separator />
+        <div className="flex justify-between items-center">
+          <Heading title="API" description="Public API for calls" />
+          <Sheet open={isApiListOpen} onOpenChange={setIsApiListOpen}>
+            <SheetTrigger asChild>
+              <Button variant="outline">View API</Button>
+            </SheetTrigger>
+            <SheetContent>
+              <SheetHeader>
+                <SheetTitle>API List</SheetTitle>
+              </SheetHeader>
+              <ApiAlert
+                title="NEXT_PUBLIC_API_URL"
+                description={`${origin}/api/${params.siteId}`}
+                variant="public"
+              />
+            </SheetContent>
+          </Sheet>
+        </div>
+      </div>
     </>
   );
 };

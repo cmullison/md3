@@ -8,6 +8,14 @@ import { useParams, useRouter } from "next/navigation";
 import { SongColumn, columns } from "./columns";
 import { DataTable } from "@/components/data-table";
 import { ApiList } from "@/components/api-list";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { useState } from "react";
 
 interface SongsClientProps {
   data: SongColumn[];
@@ -16,7 +24,7 @@ interface SongsClientProps {
 export const SongsClient: React.FC<SongsClientProps> = ({ data }) => {
   const router = useRouter();
   const params = useParams();
-
+  const [isApiListOpen, setIsApiListOpen] = useState(false);
   return (
     <>
       <div className="flex items-center justify-between">
@@ -33,9 +41,20 @@ export const SongsClient: React.FC<SongsClientProps> = ({ data }) => {
 
       <DataTable columns={columns} data={data} searchKey="name" />
 
-      <Heading title="API" description="API calls for songs" />
-      <Separator />
-      <ApiList entityName="songs" entityIdName="songsId" />
+      <div className="flex justify-between items-center">
+        <Heading title="API" description="API calls for music" />
+        <Sheet open={isApiListOpen} onOpenChange={setIsApiListOpen}>
+          <SheetTrigger asChild>
+            <Button variant="outline">View API</Button>
+          </SheetTrigger>
+          <SheetContent>
+            <SheetHeader>
+              <SheetTitle>API List</SheetTitle>
+            </SheetHeader>
+            <ApiList entityName="music" entityIdName="songId" />
+          </SheetContent>
+        </Sheet>
+      </div>
     </>
   );
 };

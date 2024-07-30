@@ -10,11 +10,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { UserIcon, LogOut } from "lucide-react";
+import { UserIcon, LogOut, Sun, Moon, Laptop, Flag } from "lucide-react";
+import { useTheme } from "next-themes";
 
 const AuthButtonClient = () => {
   const profile = useProfile();
   const params = useParams();
+  const { setTheme } = useTheme();
 
   if (!profile) {
     return null; // Instead of redirecting, we'll just return null
@@ -44,6 +46,23 @@ const AuthButtonClient = () => {
               <UserIcon className="mr-2 h-4 w-4" />
               <span>Edit Profile</span>
             </Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => setTheme("light")}>
+            <Sun className="mr-2 h-4 w-4" />
+            <span>Light</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setTheme("dark")}>
+            <Moon className="mr-2 h-4 w-4" />
+            <span>Dark</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setTheme("masters-dark")}>
+            <Flag className="mr-2 h-4 w-4" />
+            <span>The Masters</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setTheme("system")}>
+            <Laptop className="mr-2 h-4 w-4"></Laptop>
+            <span>System</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => signOut()}>

@@ -53,7 +53,12 @@ export default async function RootLayout({
         <div className="">
           <ToastProvider />
           <ModalProvider />
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem={true}
+            themes={["light", "dark", "masters", "masters-dark", "forest"]}
+          >
             {children}
           </ThemeProvider>
         </div>
