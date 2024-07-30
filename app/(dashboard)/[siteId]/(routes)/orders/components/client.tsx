@@ -13,7 +13,7 @@ interface OrderClientProps {
 export const OrderClient: React.FC<OrderClientProps> = ({ data }) => {
   return (
     <>
-      <div className="space-y-6 p-4">
+      <div className="space-y-6 p-2">
         <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between">
           <Heading
             title={`Orders (${data.length})`}

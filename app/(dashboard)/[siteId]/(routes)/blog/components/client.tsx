@@ -27,7 +27,7 @@ export const BlogClient: React.FC<BlogClientProps> = ({ data }) => {
   const [isApiListOpen, setIsApiListOpen] = useState(false);
   return (
     <>
-      <div className="space-y-6 p-4">
+      <div className="space-y-6 p-2">
         <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between">
           <Heading
             title={`Posts (${data.length})`}
