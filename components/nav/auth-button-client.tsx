@@ -58,7 +58,7 @@ const AuthButtonClient = () => {
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setTheme("masters-dark")}>
             <Flag className="mr-2 h-4 w-4" />
-            <span>The Masters</span>
+            <span>Augusta</span>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setTheme("system")}>
             <Laptop className="mr-2 h-4 w-4"></Laptop>
