@@ -4,12 +4,15 @@ import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Video } from "@prisma/client";
-import { Trash } from "lucide-react";
+import { Trash, Upload } from "lucide-react";
+import { useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
-import { useState } from "react";
 import {
   Form,
   FormControl,
@@ -19,15 +22,17 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import toast from "react-hot-toast";
-import axios from "axios";
-import { useParams, useRouter } from "next/navigation";
+import { Textarea } from "@/components/ui/textarea";
 import { AlertModal } from "@/components/modals/alert-modal";
-import ImageUpload from "@/components/ui/image-upload";
+import { VideoUpload } from "@/components/ui/video-upload";
+import { createClient } from "@/utils/supabase/client";
 
 const formSchema = z.object({
-  title: z.string().min(1),
-  label: z.string().min(1),
+  title: z.string().min(1, "Title is required"),
+  description: z.string().min(1, "Description is required"),
+  label: z.string().min(1, "Category is required"),
+  tags: z.string().optional(),
+  imageUrl: z.string().url("Invalid video URL"),
 });
 
 type VideoFormValues = z.infer<typeof formSchema>;
@@ -36,6 +41,8 @@ interface VideoFormProps {
   initialData: Video | null;
 }
 
+const supabase = createClient();
+
 export const VideoForm: React.FC<VideoFormProps> = ({ initialData }) => {
   const params = useParams();
   const router = useRouter();
@@ -43,16 +50,22 @@ export const VideoForm: React.FC<VideoFormProps> = ({ initialData }) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const title = initialData ? "Edit video" : "Create video";
-  const description = initialData ? "Edit a video" : "Add a new video";
-  const toastMessage = initialData ? "Video updated." : "Video created.";
-  const action = initialData ? "Save changes" : "Create";
+  const title = initialData ? "Edit video" : "Upload new video";
+  const label = initialData ? "Edit video" : "Upload new video";
+  const description = initialData
+    ? "Edit video details"
+    : "Upload and add details for a new video";
+  const toastMessage = initialData ? "Video updated." : "Video uploaded.";
+  const action = initialData ? "Save changes" : "Upload";
 
   const form = useForm<VideoFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
       title: "",
+      description: "",
       label: "",
+      tags: "",
+      imageUrl: "",
     },
   });
 
@@ -61,7 +74,7 @@ export const VideoForm: React.FC<VideoFormProps> = ({ initialData }) => {
       setLoading(true);
       if (initialData) {
         await axios.patch(
-          `/api/${params.siteId}/videos${params.videoId}`,
+          `/api/${params.siteId}/videos/${params.videoId}`,
           data
         );
       } else {
@@ -71,6 +84,7 @@ export const VideoForm: React.FC<VideoFormProps> = ({ initialData }) => {
       router.refresh();
       toast.success(toastMessage);
     } catch (error) {
+      console.error("Error uploading file:", error);
       toast.error("Something went wrong.");
     } finally {
       setLoading(false);
@@ -80,7 +94,7 @@ export const VideoForm: React.FC<VideoFormProps> = ({ initialData }) => {
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.siteId}/videos${params.videoId}`);
+      await axios.delete(`/api/${params.siteId}/videos/${params.videoId}`);
       router.push(`/${params.siteId}/videos`);
       router.refresh();
       toast.success("Video deleted.");
@@ -121,17 +135,17 @@ export const VideoForm: React.FC<VideoFormProps> = ({ initialData }) => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-8 w-full"
         >
-          <div className="grid grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <FormField
               control={form.control}
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>Title</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Video title"
+                      placeholder="Enter video title"
                       {...field}
                     />
                   </FormControl>
@@ -144,11 +158,45 @@ export const VideoForm: React.FC<VideoFormProps> = ({ initialData }) => {
               name="label"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Value</FormLabel>
+                  <FormLabel>Category</FormLabel>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder="Video label"
+                      placeholder="Enter video category"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem className="col-span-full">
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      disabled={loading}
+                      placeholder="Enter video description"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="tags"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tags (comma-separated)</FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled={loading}
+                      placeholder="Enter tags"
                       {...field}
                     />
                   </FormControl>
@@ -157,6 +205,26 @@ export const VideoForm: React.FC<VideoFormProps> = ({ initialData }) => {
               )}
             />
           </div>
+
+          <FormField
+            control={form.control}
+            name="imageUrl"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Video</FormLabel>
+                <FormControl>
+                  <VideoUpload
+                    value={field.value}
+                    disabled={loading}
+                    onChange={field.onChange}
+                    onRemove={() => field.onChange("")}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <Button disabled={loading} className="ml-auto" type="submit">
             {action}
           </Button>

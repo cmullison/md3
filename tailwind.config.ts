@@ -25,7 +25,10 @@ const config = {
         "5/6": "83.3333%",
       },
       colors: {
-        
+        text: {
+          'active-link': "hsl(var(--active-link))",
+        },
+        'active-link': "hsl(var(--active-link))",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

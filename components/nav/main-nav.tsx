@@ -81,7 +81,7 @@ export function MainNav({
               className={cn(
                 "text-sm font-medium transition-colors hover:text-primary",
                 currentPage?.href === route.href
-                  ? "text-amber-300 dark:text-white"
+                  ? "text-active-link"
                   : "text-muted-foreground"
               )}
             >
