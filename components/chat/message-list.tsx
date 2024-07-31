@@ -1,14 +1,17 @@
 import React from "react";
+import { ComponentPropsWithoutRef } from "react";
 import CodeBlock from "./code-block";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { useProfile } from "@/providers/profile-provider";
 import { redirect } from "next/navigation";
+import ReactMarkdown from "react-markdown";
+import { ComponentProps } from "react";
 
 interface Message {
   text: string;
   sender: "user" | "claude";
   tokenCount?: number;
-  cost?: number;
+  cost?: number | string;
 }
 
 interface MessageListProps {
@@ -22,48 +25,43 @@ export default function MessageList({ messages }: MessageListProps) {
     return redirect("/login");
   }
 
-  const renderMessageContent = (content: string | React.ReactNode) => {
-    if (typeof content !== "string") return content;
-
-    const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g;
-    const parts: React.ReactNode[] = [];
-    let lastIndex = 0;
-    let match;
-
-    while ((match = codeBlockRegex.exec(content)) !== null) {
-      // Add text before the code block
-      if (match.index > lastIndex) {
-        parts.push(
-          <span key={lastIndex}>{content.slice(lastIndex, match.index)}</span>
+  const renderMessageContent = (content: string) => {
+    const components: Partial<
+      ComponentProps<typeof ReactMarkdown>["components"]
+    > = {
+      code({
+        inline,
+        className,
+        children,
+        ...props
+      }: ComponentPropsWithoutRef<"code"> & { inline?: boolean }) {
+        const match = /language-(\w+)/.exec(className || "");
+        return !inline && match ? (
+          <CodeBlock
+            code={String(children).replace(/\n$/, "")}
+            language={match[1]}
+          />
+        ) : (
+          <code className={className} {...props}>
+            {children}
+          </code>
         );
-      }
+      },
+    };
 
-      // Add the code block
-      const [, language, code] = match;
-      parts.push(
-        <CodeBlock
-          key={match.index}
-          code={code.trim()}
-          language={language || "plaintext"}
-        />
-      );
-
-      lastIndex = match.index + match[0].length;
-    }
-
-    // Add any remaining text after the last code block
-    if (lastIndex < content.length) {
-      parts.push(<span key={lastIndex}>{content.slice(lastIndex)}</span>);
-    }
-
-    return parts.length > 0 ? parts : <span>{content}</span>;
+    return <ReactMarkdown components={components}>{content}</ReactMarkdown>;
   };
 
   const renderTokenInfo = (message: Message) => {
-    if (message.tokenCount && message.cost) {
+    if (message.tokenCount !== undefined && message.cost !== undefined) {
+      const formattedCost =
+        typeof message.cost === "number"
+          ? message.cost.toFixed(4)
+          : message.cost.toString();
+
       return (
-        <div className="token-info">
-          Tokens: {message.tokenCount} | Cost: ${message.cost}
+        <div className="token-info text-xs text-gray-500 mt-2">
+          Tokens: {message.tokenCount} | Cost: ${formattedCost}
         </div>
       );
     }
@@ -79,46 +77,50 @@ export default function MessageList({ messages }: MessageListProps) {
   const initials = getInitials(profile.first_name, profile.last_name);
 
   return (
-    <div className="flex-1 overflow-auto p-4">
-      <div className="grid gap-4">
+    <div className="flex-1 overflow-auto p-2 sm:p-4">
+      <div className="flex flex-col gap-4">
         {messages.map((message, index) => (
           <div
             key={index}
-            className={`flex items-start gap-4 ${
+            className={`flex items-start gap-2 sm:gap-4 ${
               message.sender === "user" ? "justify-end" : "justify-start"
             }`}
           >
             <Avatar
-              className={`w-8 h-8 border ${
+              className={`w-6 h-6 sm:w-8 sm:h-8 border flex-shrink-0 ${
                 message.sender === "user" ? "hidden" : ""
               }`}
             >
-              <AvatarFallback>CL</AvatarFallback>
+              <AvatarFallback className="text-xs sm:text-sm">CL</AvatarFallback>
             </Avatar>
             <div
-              className={`max-w-[70%] rounded-lg p-3 ${
+              className={`max-w-[85%] sm:max-w-[70%] rounded-lg p-2 sm:p-3 ${
                 message.sender === "user"
                   ? "bg-primary text-primary-foreground"
                   : "bg-secondary text-secondary-foreground"
               }`}
             >
-              <div className="text-sm">
+              <div className="text-xs sm:text-sm prose prose-sm dark:prose-invert max-w-none">
                 {renderMessageContent(message.text)}
               </div>
               <div
                 className={`${
-                  message.sender === "user" ? "" : "mt-2 text-xs opacity-70"
+                  message.sender === "user"
+                    ? ""
+                    : "mt-1 sm:mt-2 text-xs opacity-70"
                 }`}
               >
                 {renderTokenInfo(message)}
               </div>
             </div>
             <Avatar
-              className={`w-8 h-8 border ${
+              className={`w-6 h-6 sm:w-8 sm:h-8 border flex-shrink-0 ${
                 message.sender === "user" ? "" : "hidden"
               }`}
             >
-              <AvatarFallback>{initials}</AvatarFallback>
+              <AvatarFallback className="text-xs sm:text-sm">
+                {initials}
+              </AvatarFallback>
             </Avatar>
           </div>
         ))}

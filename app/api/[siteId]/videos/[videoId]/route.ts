@@ -17,7 +17,7 @@ const supabase = createClient();
   }
         const body = await req.json();
 
-        const { label, imageUrl } = body;
+        const { label, videoUrl } = body;
 
         if(!user) {
             return new NextResponse("Unauthenticated", {status: 401})
@@ -27,7 +27,7 @@ const supabase = createClient();
             return new NextResponse("Label is required", {status: 400})
         }
 
-        if(!imageUrl) {
+        if(!videoUrl) {
             return new NextResponse("ImageUrl is required", {status: 400})
         }
 
@@ -52,7 +52,7 @@ const supabase = createClient();
             },
             data: {
                 label,
-                imageUrl
+                videoUrl
             }
         })
 

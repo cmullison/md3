@@ -25,7 +25,7 @@ export async function POST (
         
         const body = await req.json();
 
-        const { label, imageUrl, title } = body;
+        const { label, videoUrl, title } = body;
 
         if(!user) {
             return new NextResponse("Unauthenticated", {status: 401})
@@ -35,8 +35,8 @@ export async function POST (
             return new NextResponse("Label is required", {status: 400})
         }
 
-        if(!imageUrl) {
-            return new NextResponse("ImageUrl is required", {status: 400})
+        if(!videoUrl) {
+            return new NextResponse("videoUrl is required", {status: 400})
         }
 
         if(!params.siteId) {
@@ -58,7 +58,7 @@ export async function POST (
             data: {
                 label, 
                 title,
-                imageUrl, 
+                videoUrl, 
                 siteId: params.siteId
             }
         })

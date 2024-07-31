@@ -1,3 +1,5 @@
+/* eslint-disable */
+@import 'highlight.js/styles/github.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -7,7 +9,6 @@
     opacity: 0;
     transform: translateY(20px);
   }
-
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -19,7 +20,6 @@
     opacity: 1;
     transform: translateY(0);
   }
-
   100% {
     opacity: 0;
     transform: translateY(20px);
@@ -46,8 +46,8 @@ body,
 
 .code-language {
   display: inline-block;
-  background-color: #e0e0e0;
-  color: #333;
+  background-color: var(--code-language-bg);
+  color: var(--code-language-color);
   font-size: 0.8rem;
   padding: 0.2rem 0.5rem;
   border-top-left-radius: 4px;
@@ -59,6 +59,8 @@ body,
   border-radius: 4px;
   padding: 1rem;
   margin-top: 0;
+  background-color: var(--code-block-bg);
+  color: var(--code-block-color);
 }
 
 .code-block pre {
@@ -69,33 +71,41 @@ body,
 
 .token-info {
   font-size: 0.8rem;
-  color: #666;
+  color: var(--token-info-color);
   margin-top: 0.5rem;
   text-align: right;
 }
 
-.copy-button {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 0.25rem 0.5rem;
-  cursor: pointer;
-  font-size: 0.8rem;
+.prose ol,
+.prose ul {
+  @apply my-4 ml-8;
 }
 
-.copy-button:hover {
-  background-color: #0056b3;
+.prose ol {
+  @apply list-decimal;
 }
 
+.prose ul {
+  @apply list-disc;
+}
+
+.prose li {
+  @apply my-1;
+}
+
+.prose li::marker {
+  @apply text-primary-foreground;
+}
 
 @layer base {
   :root {
-      
-      
+    --syntax-base: 210 17% 82%;
+      --syntax-comment: 200 30% 45%;
+      --syntax-keyword: 330 85% 55%;
+      --syntax-string: 95 65% 55%;
+      --syntax-variable: 220 100% 60%;
+      --syntax-function: 190 100% 50%;
+      --syntax-operator: 40 100% 55%;
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
@@ -125,6 +135,13 @@ body,
   }
 
   .dark {
+    --syntax-base: 210 17% 95%;
+      --syntax-comment: 200 30% 65%;
+      --syntax-keyword: 330 85% 75%;
+      --syntax-string: 95 75% 65%;
+      --syntax-variable: 220 100% 80%;
+      --syntax-function: 190 100% 70%;
+      --syntax-operator: 40 100% 70%;
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
     --card: 222.2 84% 4.9%;
@@ -151,92 +168,159 @@ body,
     --chart-5: 340 75% 55%;
     --active-link: 0, 0%, 100%;
   }
-    .forest {
-      --background: 120 30% 20%;
-      --foreground: 120 30% 90%;
-      --card: 120 30% 25%;
-      --card-foreground: 120 30% 90%;
-      --popover: 120 30% 20%;
-      --popover-foreground: 120 30% 90%;
-      --primary: 142 76% 46%;
-      --primary-foreground: 120 30% 97%;
-      --secondary: 120 20% 30%;
-      --secondary-foreground: 120 30% 90%;
-      --muted: 120 20% 30%;
-      --muted-foreground: 120 20% 70%;
-      --accent: 142 76% 46%;
-      --accent-foreground: 120 30% 97%;
-      --destructive: 0 62% 40%;
-      --destructive-foreground: 120 30% 97%;
-      --border: 120 20% 35%;
-      --input: 120 20% 35%;
-      --ring: 142 76% 46%;
-      --chart-1: 142 76% 56%;
-      --chart-2: 84 56% 66%;
-      --chart-3: 39 84% 78%;
-      --chart-4: 210 64% 72%;
-      --chart-5: 271 68% 79%;
-    }
-        .masters {
-          --background: 108 28% 95%;
-          --foreground: 108 28% 10%;
-          --card: 108 28% 98%;
-          --card-foreground: 108 28% 10%;
-          --popover: 108 28% 98%;
-          --popover-foreground: 108 28% 10%;
-          --primary: 108 50% 30%;
-          --primary-foreground: 108 28% 98%;
-          --secondary: 48 100% 50%;
-          --secondary-foreground: 108 28% 10%;
-          --muted: 108 15% 85%;
-          --muted-foreground: 108 28% 40%;
-          --accent: 48 100% 50%;
-          --accent-foreground: 108 28% 10%;
-          --destructive: 0 85% 60%;
-          --destructive-foreground: 108 28% 98%;
-          --border: 108 28% 80%;
-          --input: 108 28% 80%;
-          --ring: 108 50% 30%;
-          --chart-1: 108 50% 40%;
-          --chart-2: 48 100% 50%;
-          --chart-3: 108 28% 60%;
-          --chart-4: 48 70% 60%;
-          --chart-5: 108 40% 70%;
-        }
-                .masters-dark {
-                  --background: 108 28% 10%;
-                  --foreground: 108 28% 95%;
-                  --card: 108 28% 15%;
-                  --card-foreground: 108 28% 95%;
-                  --popover: 108 28% 15%;
-                  --popover-foreground: 108 28% 95%;
-                  --primary: 108 50% 40%;
-                  --primary-foreground: 108 28% 10%;
-                  --secondary: 48 100% 50%;
-                  --secondary-foreground: 108 28% 10%;
-                  --muted: 108 15% 25%;
-                  --muted-foreground: 108 28% 70%;
-                  --accent: 48 100% 50%;
-                  --accent-foreground: 108 28% 10%;
-                  --destructive: 0 85% 60%;
-                  --destructive-foreground: 108 28% 10%;
-                  --border: 108 28% 30%;
-                  --input: 108 28% 30%;
-                  --ring: 108 50% 40%;
-                  --chart-1: 108 50% 60%;
-                  --chart-2: 48 100% 50%;
-                  --chart-3: 108 28% 50%;
-                  --chart-4: 48 70% 60%;
-                  --chart-5: 108 40% 50%;
-                  --active-link: 46 97% 64%;
-                }
-                                
+
+  .forest {
+    --background: 120 30% 20%;
+    --foreground: 120 30% 90%;
+    --card: 120 30% 25%;
+    --card-foreground: 120 30% 90%;
+    --popover: 120 30% 20%;
+    --popover-foreground: 120 30% 90%;
+    --primary: 142 76% 46%;
+    --primary-foreground: 120 30% 97%;
+    --secondary: 120 20% 30%;
+    --secondary-foreground: 120 30% 90%;
+    --muted: 120 20% 30%;
+    --muted-foreground: 120 20% 70%;
+    --accent: 142 76% 46%;
+    --accent-foreground: 120 30% 97%;
+    --destructive: 0 62% 40%;
+    --destructive-foreground: 120 30% 97%;
+    --border: 120 20% 35%;
+    --input: 120 20% 35%;
+    --ring: 142 76% 46%;
+    --chart-1: 142 76% 56%;
+    --chart-2: 84 56% 66%;
+    --chart-3: 39 84% 78%;
+    --chart-4: 210 64% 72%;
+    --chart-5: 271 68% 79%;
+  }
+
+  .masters {
+    --syntax-base: 108 15% 20%;
+      --syntax-comment: 138 25% 45%;
+      --syntax-keyword: 48 90% 50%;
+      --syntax-string: 78 70% 45%;
+      --syntax-variable: 18 80% 50%;
+      --syntax-function: 168 70% 45%;
+      --syntax-operator: 228 60% 55%;
+    --background: 108 28% 95%;
+    --foreground: 108 28% 10%;
+    --card: 108 28% 98%;
+    --card-foreground: 108 28% 10%;
+    --popover: 108 28% 98%;
+    --popover-foreground: 108 28% 10%;
+    --primary: 108 50% 30%;
+    --primary-foreground: 108 28% 98%;
+    --secondary: 48 100% 50%;
+    --secondary-foreground: 108 28% 10%;
+    --muted: 108 15% 85%;
+    --muted-foreground: 108 28% 40%;
+    --accent: 48 100% 50%;
+    --accent-foreground: 108 28% 10%;
+    --destructive: 0 85% 60%;
+    --destructive-foreground: 108 28% 98%;
+    --border: 108 28% 80%;
+    --input: 108 28% 80%;
+    --ring: 108 50% 30%;
+    --chart-1: 108 50% 40%;
+    --chart-2: 48 100% 50%;
+    --chart-3: 108 28% 60%;
+    --chart-4: 48 70% 60%;
+    --chart-5: 108 40% 70%;
+  }
+
+  .masters-dark {
+    --syntax-base: 108 15% 90%;
+      --syntax-comment: 138 25% 65%;
+      --syntax-keyword: 48 90% 65%;
+      --syntax-string: 78 70% 65%;
+      --syntax-variable: 18 80% 70%;
+      --syntax-function: 168 70% 65%;
+      --syntax-operator: 228 60% 70%;
+    --background: 108 28% 10%;
+    --foreground: 108 28% 95%;
+    --card: 108 28% 15%;
+    --card-foreground: 108 28% 95%;
+    --popover: 108 28% 15%;
+    --popover-foreground: 108 28% 95%;
+    --primary: 108 50% 40%;
+    --primary-foreground: 108 28% 10%;
+    --secondary: 48 100% 50%;
+    --secondary-foreground: 108 28% 10%;
+    --muted: 108 15% 25%;
+    --muted-foreground: 108 28% 70%;
+    --accent: 48 100% 50%;
+    --accent-foreground: 108 28% 10%;
+    --destructive: 0 85% 60%;
+    --destructive-foreground: 108 28% 10%;
+    --border: 108 28% 30%;
+    --input: 108 28% 30%;
+    --ring: 108 50% 40%;
+    --chart-1: 108 50% 60%;
+    --chart-2: 48 100% 50%;
+    --chart-3: 108 28% 50%;
+    --chart-4: 48 70% 60%;
+    --chart-5: 108 40% 50%;
+    --active-link: 46 97% 64%;
+  }
+}
+
+
+.hljs {
+  color: hsl(var(--syntax-base));
+  background: transparent;
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: hsl(var(--syntax-comment));
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-addition {
+  color: hsl(var(--syntax-keyword));
+}
+
+.hljs-string,
+.hljs-template-tag,
+.hljs-template-variable {
+  color: hsl(var(--syntax-string));
+}
+
+.hljs-variable,
+.hljs-attribute,
+.hljs-tag,
+.hljs-name,
+.hljs-regexp,
+.hljs-link,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class {
+  color: hsl(var(--syntax-variable));
+}
+
+.hljs-number,
+.hljs-meta,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params {
+  color: hsl(var(--syntax-function));
+}
+
+.hljs-symbol,
+.hljs-bullet,
+.hljs-deletion,
+.hljs-subst {
+  color: hsl(var(--syntax-operator));
 }
 
 @layer base {
   * {
     @apply border-border;
-    
   }
 
   body {

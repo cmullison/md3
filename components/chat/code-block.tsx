@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Card, CardContent, CardHeader } from "../ui/card";
+import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
 import { Check, Copy } from "lucide-react";
+import hljs from "highlight.js";
 
 interface CodeBlockProps {
   code: string;
@@ -18,8 +19,10 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ code, language }) => {
     });
   };
 
+  const highlightedCode = hljs.highlight(code, { language }).value;
+
   return (
-    <Card className="w-full max-w-3xl">
+    <Card className="w-full my-4 overflow-hidden">
       <div className="flex justify-between items-center bg-muted py-2 px-4">
         {language && (
           <div className="text-muted-foreground text-sm font-mono">
@@ -39,10 +42,12 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ code, language }) => {
           )}
         </Button>
       </div>
-
       <CardContent className="p-0">
         <pre className="overflow-x-auto p-4">
-          <code className="">{code}</code>
+          <code
+            className={`language-${language}`}
+            dangerouslySetInnerHTML={{ __html: highlightedCode }}
+          />
         </pre>
       </CardContent>
     </Card>
