@@ -106,7 +106,7 @@ model Video {
   site      Site     @relation("SiteToVideo", fields: [siteId], references: [id])
   label     String
   title     String
-  imageUrl  String
+  videoUrl  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
