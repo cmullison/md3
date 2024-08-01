@@ -11,6 +11,7 @@ import { createClient } from "@/utils/supabase/client";
 import { redirect, useParams } from "next/navigation";
 import { useProfile } from "@/providers/profile-provider";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 interface Message {
   text: string;
@@ -100,15 +101,18 @@ export default function ChatInterface({ user }: ChatInterfaceProps) {
             if (user && user.id) {
               saveConversation(user.id, "New Conversation", messages)
                 .then((savedConversation) => {
+                  toast.success("Conversation saved");
                   console.log(
                     "Conversation saved successfully",
                     savedConversation
                   );
                 })
                 .catch((error) => {
+                  toast.error("Something went wrong");
                   console.error("Failed to save conversation:", error);
                 });
             } else {
+              toast.error("Something went wrong");
               console.error("User or user ID is not available");
             }
           }}
