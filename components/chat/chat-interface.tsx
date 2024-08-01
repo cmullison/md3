@@ -7,6 +7,10 @@ import TypingIndicator from "./typing-indicator";
 import { Button } from "../ui/button";
 import { MessageCircleIcon } from "lucide-react";
 import EmptyChatState from "./empty-chat";
+import { createClient } from "@/utils/supabase/client";
+import { redirect, useParams } from "next/navigation";
+import { useProfile } from "@/providers/profile-provider";
+import axios from "axios";
 
 interface Message {
   text: string;
@@ -15,7 +19,13 @@ interface Message {
   cost?: number;
 }
 
-export default function ChatInterface() {
+interface ChatInterfaceProps {
+  user: { id: string };
+}
+
+export default function ChatInterface({ user }: ChatInterfaceProps) {
+  const profile = useProfile();
+  const params = useParams();
   const [messages, setMessages] = useState<Message[]>([]);
   const typingIndicatorRef = useRef<HTMLDivElement | null>(null);
   const [isClaudeTyping, setIsClaudeTyping] = useState(false);
@@ -24,7 +34,7 @@ export default function ChatInterface() {
     setMessages([...messages, { text: message, sender: "user" }]);
     setIsClaudeTyping(true);
     try {
-      const response = await fetch("/api/[siteId]/chat", {
+      const response = await fetch("/api/[siteId]/chat/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message }),
@@ -60,14 +70,51 @@ export default function ChatInterface() {
     }
   }, [isClaudeTyping]);
 
+  async function saveConversation(
+    userId: string | undefined,
+    title: string,
+    messages: Message[]
+  ) {
+    if (!userId) {
+      throw new Error("User ID is not available");
+    }
+
+    const response = await axios.post(
+      `/api/${params.siteId}/chat/conversations/`,
+      { userId, title, messages } // Send as an object, not stringified
+    );
+
+    if (!response.data) {
+      throw new Error("Failed to save conversation");
+    }
+
+    return response.data;
+  }
+
   return (
     <div className="flex min-h-screen flex-col">
       <div className="bg-background text-foreground py-2 px-4 flex items-center justify-center">
         <div className="text-lg font-bold"></div>
-        <Button variant="ghost" size="icon" className="hidden rounded-full">
-          <MessageCircleIcon className="w-6 h-6" />
-          <span className="sr-only">Open chat</span>
-        </Button>
+        <button
+          onClick={() => {
+            if (user && user.id) {
+              saveConversation(user.id, "New Conversation", messages)
+                .then((savedConversation) => {
+                  console.log(
+                    "Conversation saved successfully",
+                    savedConversation
+                  );
+                })
+                .catch((error) => {
+                  console.error("Failed to save conversation:", error);
+                });
+            } else {
+              console.error("User or user ID is not available");
+            }
+          }}
+        >
+          Save Conversation
+        </button>
       </div>
 
       <div className="flex-1 overflow-hidden flex flex-col">
