@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ModalProvider } from "@/providers/modal-provider";
@@ -9,14 +9,18 @@ import { createClient } from "@/utils/supabase/server";
 
 const inter = Inter({ subsets: ["latin"] });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  // Also supported by less commonly used
+  // interactiveWidget: 'resizes-visual',
+};
+
 export const metadata: Metadata = {
   title: "Mulls Design",
   description: "UX, sound, and graphic design from Chris Mullison",
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-  },
 };
 export default async function RootLayout({
   children,
@@ -35,6 +39,12 @@ export default async function RootLayout({
   }
   return (
     <html lang="en">
+      <head>
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+        />
+      </head>
       <body className={inter.className}>
         <div
           className={`${

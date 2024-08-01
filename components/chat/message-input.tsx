@@ -32,7 +32,7 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => {
       className="flex flex-col gap-4 w-full max-w-2xl mx-auto p-4"
     >
       <div className="bg-background border-t px-4 py-2">
-        <div className="relative">
+        <div className="w-full relative">
           <Textarea
             ref={textareaRef}
             value={message}
