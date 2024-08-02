@@ -164,7 +164,12 @@ export default function ChatInterface({ user }: ChatInterfaceProps) {
               <EmptyChatState />
             </div>
           ) : (
-            <MessageList messages={messages} />
+            <MessageList
+              messages={messages}
+              onDeleteTempImage={function (): void {
+                throw new Error("Function not implemented.");
+              }}
+            />
           )}
           <div
             ref={typingIndicatorRef}
