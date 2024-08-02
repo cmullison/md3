@@ -16,35 +16,42 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => {
     if (message.trim()) {
       onSendMessage(message);
       setMessage("");
-      // Focus the textarea after submission
       textareaRef.current?.focus();
     }
   };
 
-  // Focus the textarea when the component mounts
   useEffect(() => {
     textareaRef.current?.focus();
   }, []);
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(e);
+    }
+  };
+
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex flex-col gap-4 w-full max-w-2xl mx-auto p-4"
-    >
-      <div className="bg-background border-t px-4 py-2">
-        <div className="w-full relative">
-          <Textarea
-            ref={textareaRef}
-            value={message}
-            placeholder="Type your message..."
-            onChange={(e) => setMessage(e.target.value)}
-            className="pr-16 resize-none"
-          />
-          <Button type="submit" size="icon" className="absolute top-2 right-2">
-            <SendIcon className="w-5 h-5" />
-            <span className="sr-only">Send</span>
-          </Button>
-        </div>
+    <form onSubmit={handleSubmit} className="flex-1">
+      <div className="relative">
+        <Textarea
+          ref={textareaRef}
+          value={message}
+          placeholder="Type your message..."
+          onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={handleKeyDown}
+          className="pr-12 resize-none min-h-[60px]"
+          rows={1}
+        />
+        <Button
+          type="submit"
+          size="icon"
+          className="absolute align-middle bottom-2 right-2 hover:bg-primary hover:text-primary-foreground"
+          disabled={!message.trim()}
+        >
+          <SendIcon className="w-4 h-4" />
+          <span className="sr-only">Send</span>
+        </Button>
       </div>
     </form>
   );

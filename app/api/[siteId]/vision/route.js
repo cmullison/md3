@@ -10,12 +10,22 @@ const anthropic = new Anthropic({
 
 export async function POST(request) {
   try {
-    const { message } = await request.json();
+    const { message, image } = await request.json();
+    
+    let content = [{ type: 'text', text: message }];
+    
+    if (image) {
+      content.unshift({
+        type: 'image',
+        source: { type: 'base64', media_type: 'image/jpeg', data: image }
+      });
+    }
+
     const response = await anthropic.messages.create({
       model: "claude-3-5-sonnet-20240620",
       max_tokens: 4000,
-      system: "You are a helpful coding assistant who is an expert in react, typescript, tailwind, next.js, and more. You will primarily be asked for code, and questions related to it. Be concise with your responses and ask for clarifying questions when needed. When sending code, include the full code for that file unless otherwise asked.",
-      messages: [{ role: 'user', content: message }],
+      system: "You are a helpful coding assistant who is an expert in react, typescript, tailwind, shadcn-ui, next.js, and more. When giving code responses, always give the entire code for a file back if you are making corrections, unless otherwise asked. Ask clarifying questions when needed.",
+      messages: [{ role: 'user', content: content }],
     });
 
     // Calculate token count and cost
@@ -29,7 +39,7 @@ export async function POST(request) {
     return NextResponse.json({
       reply: response.content[0].text,
       tokenCount: totalTokens,
-      cost: cost.toFixed(6), // Round to 6 decimal places
+      cost: cost, // Round to 6 decimal places
     });
   } catch (error) {
     console.error('Error:', error);

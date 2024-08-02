@@ -6,19 +6,27 @@ import { useProfile } from "@/providers/profile-provider";
 import { redirect } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import { ComponentProps } from "react";
+import TempImageDisplay from "./temp-image-display";
+import Image from "next/image";
 
 interface Message {
   text: string;
   sender: "user" | "claude";
   tokenCount?: number;
   cost?: number | string;
+  image?: string;
+  tempImage?: string;
 }
 
 interface MessageListProps {
   messages: Message[];
+  onDeleteTempImage: () => void;
 }
 
-export default function MessageList({ messages }: MessageListProps) {
+export default function MessageList({
+  messages,
+  onDeleteTempImage,
+}: MessageListProps) {
   const profile = useProfile();
 
   if (!profile) {
@@ -103,6 +111,21 @@ export default function MessageList({ messages }: MessageListProps) {
               <div className="text-xs sm:text-sm prose prose-sm dark:prose-invert max-w-none">
                 {renderMessageContent(message.text)}
               </div>
+              {message.tempImage && (
+                <TempImageDisplay
+                  imageUrl={message.tempImage}
+                  onDelete={onDeleteTempImage}
+                />
+              )}
+              {message.image && (
+                <Image
+                  src={message.image}
+                  alt="Uploaded image"
+                  width={200}
+                  height={200}
+                  className="rounded-lg"
+                />
+              )}
               <div
                 className={`${
                   message.sender === "user"

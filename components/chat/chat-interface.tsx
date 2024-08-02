@@ -5,13 +5,27 @@ import MessageList from "./message-list";
 import MessageInput from "./message-input";
 import TypingIndicator from "./typing-indicator";
 import { Button } from "../ui/button";
-import { MessageCircleIcon } from "lucide-react";
+import {
+  AlertCircle,
+  Check,
+  MessageCircleIcon,
+  MessageSquare,
+  Save,
+} from "lucide-react";
 import EmptyChatState from "./empty-chat";
 import { createClient } from "@/utils/supabase/client";
 import { redirect, useParams } from "next/navigation";
 import { useProfile } from "@/providers/profile-provider";
 import axios from "axios";
 import toast from "react-hot-toast";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "../ui/sheet";
+import { ChatList } from "./chat-list";
 
 interface Message {
   text: string;
@@ -26,6 +40,7 @@ interface ChatInterfaceProps {
 
 export default function ChatInterface({ user }: ChatInterfaceProps) {
   const profile = useProfile();
+  const [isChatListOpen, setIsChatListOpen] = useState(false);
   const params = useParams();
   const [messages, setMessages] = useState<Message[]>([]);
   const typingIndicatorRef = useRef<HTMLDivElement | null>(null);
@@ -94,31 +109,52 @@ export default function ChatInterface({ user }: ChatInterfaceProps) {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <div className="bg-background text-foreground py-2 px-4 flex items-center justify-center">
-        <div className="text-lg font-bold"></div>
-        <button
+      <div className="bg-background text-foreground py-2 px-4 flex items-center justify-between">
+        <Button
+          variant="outline"
+          size="sm"
+          className="flex items-center space-x-2"
           onClick={() => {
             if (user && user.id) {
               saveConversation(user.id, "New Conversation", messages)
                 .then((savedConversation) => {
-                  toast.success("Conversation saved");
+                  toast.success("Conversation saved successfully");
                   console.log(
                     "Conversation saved successfully",
                     savedConversation
                   );
                 })
                 .catch((error) => {
-                  toast.error("Something went wrong");
+                  toast.error("Failed to save conversation");
                   console.error("Failed to save conversation:", error);
                 });
             } else {
-              toast.error("Something went wrong");
+              toast.error("User or user ID is not available");
               console.error("User or user ID is not available");
             }
           }}
         >
-          Save Conversation
-        </button>
+          <Save className="w-4 h-4" />
+          <span className="hidden sm:inline">Save Conversation</span>
+        </Button>
+        <Sheet open={isChatListOpen} onOpenChange={setIsChatListOpen}>
+          <SheetTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex items-center space-x-2"
+            >
+              <MessageSquare className="w-4 h-4" />
+              <span className="hidden sm:inline">Saved Chats</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent className="overflow-y-scroll">
+            <SheetHeader>
+              <SheetTitle>Saved conversations</SheetTitle>
+            </SheetHeader>
+            <ChatList isChatListOpen={isChatListOpen} />
+          </SheetContent>
+        </Sheet>
       </div>
 
       <div className="flex-1 overflow-hidden flex flex-col">
