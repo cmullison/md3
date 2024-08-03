@@ -4,9 +4,10 @@ import "./globals.css";
 import { ModalProvider } from "@/providers/modal-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { ToastProvider } from "@/providers/toast-provider";
-import Image from "next/image";
 import { createClient } from "@/utils/supabase/server";
-import EnhancedSVGLogo from "@/components/logo";
+import dynamic from "next/dynamic";
+
+const Logo = dynamic(() => import("@/components/logo"), { ssr: false });
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -47,30 +48,28 @@ export default async function RootLayout({
         />
       </head>
       <body className={inter.className}>
-        <div
-          className={`${
-            user
-              ? "hidden"
-              : "flex bg-black min-h-screen flex-col items-center justify-between p-24"
-          }`}
+        <ToastProvider />
+        <ModalProvider />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem={true}
+          themes={["light", "dark", "masters", "masters-dark", "forest"]}
         >
-          <div className="flex place-items-center ">
-            <EnhancedSVGLogo />
-          </div>
-        </div>
-
-        <div className="">
-          <ToastProvider />
-          <ModalProvider />
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem={true}
-            themes={["light", "dark", "masters", "masters-dark", "forest"]}
+          <div
+            className={`${
+              user
+                ? "hidden"
+                : "flex bg-black min-h-screen flex-col items-center justify-between p-0"
+            }`}
           >
-            {children}
-          </ThemeProvider>
-        </div>
+            <div className="flex my-auto items-center ">
+              <Logo />
+            </div>
+          </div>
+
+          <div className="">{children}</div>
+        </ThemeProvider>
       </body>
     </html>
   );

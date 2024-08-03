@@ -97,6 +97,8 @@ body,
   @apply text-primary-foreground;
 }
 
+
+
 @layer base {
   :root {
     --syntax-base: 210 17% 82%;
