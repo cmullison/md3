@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import MessageList from "./message-list";
 import MessageInput from "./message-input";
 import TypingIndicator from "./typing-indicator";
@@ -21,6 +21,8 @@ import {
 import { ChatList } from "./chat-list";
 import ImageUpload from "./image-upload";
 import TempImageDisplay from "./temp-image-display";
+import { debounce } from "lodash";
+import { updateTitle } from "@/app/actions";
 
 interface Message {
   text: string;
@@ -46,6 +48,47 @@ export default function ChatInterface({ user }: ChatInterfaceProps) {
     undefined
   );
   const [tempImage, setTempImage] = useState<string | undefined>(undefined);
+  const [conversationTitle, setConversationTitle] =
+    useState("New Conversation");
+  const [debouncedTitle, setDebouncedTitle] = useState(conversationTitle);
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const titleInputRef = useRef<HTMLInputElement>(null);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedUpdateTitle = useCallback(
+    debounce(async (id: string, title: string) => {
+      const result = await updateTitle(id, title);
+      if (!result.success) {
+        toast.error(result.message || "Failed to update title");
+      }
+    }, 2000),
+    []
+  );
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedTitle(conversationTitle);
+    }, 1900);
+
+    return () => clearTimeout(timer);
+  }, [conversationTitle]);
+
+  useEffect(() => {
+    if (params.conversationId && debouncedTitle !== conversationTitle) {
+      debouncedUpdateTitle(params.conversationId as string, debouncedTitle);
+    }
+  }, [
+    debouncedTitle,
+    params.conversationId,
+    conversationTitle,
+    debouncedUpdateTitle,
+  ]);
+
+  useEffect(() => {
+    if (isEditingTitle && titleInputRef.current) {
+      titleInputRef.current.focus();
+    }
+  }, [isEditingTitle]);
 
   const sendMessage = async (message: string) => {
     const newMessage: Message = {
@@ -127,6 +170,19 @@ export default function ChatInterface({ user }: ChatInterfaceProps) {
     setTempImage(undefined);
   };
 
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setConversationTitle(e.target.value);
+  };
+
+  const handleTitleBlur = () => {
+    setIsEditingTitle(false);
+  };
+
+  const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" || e.key === "Tab") {
+      setIsEditingTitle(false);
+    }
+  };
   return (
     <>
       <div className="flex flex-col">
@@ -137,7 +193,7 @@ export default function ChatInterface({ user }: ChatInterfaceProps) {
             className="flex items-center space-x-2"
             onClick={() => {
               if (user && user.id) {
-                saveConversation(user.id, "New Conversation", messages)
+                saveConversation(user.id, conversationTitle, messages)
                   .then((savedConversation) => {
                     toast.success("Conversation saved successfully");
                     console.log(
@@ -158,6 +214,28 @@ export default function ChatInterface({ user }: ChatInterfaceProps) {
             <Save className="w-4 h-4" />
             <span className="hidden sm:inline">Save</span>
           </Button>
+
+          <div className="flex-1 text-center px-4">
+            {isEditingTitle ? (
+              <input
+                ref={titleInputRef}
+                type="text"
+                value={conversationTitle}
+                onChange={handleTitleChange}
+                onBlur={handleTitleBlur}
+                onKeyDown={handleTitleKeyDown}
+                className="bg-transparent border-none text-center focus:outline-none"
+              />
+            ) : (
+              <h2
+                onClick={() => setIsEditingTitle(true)}
+                className="cursor-pointer hover:underline"
+              >
+                {conversationTitle}
+              </h2>
+            )}
+          </div>
+
           <Sheet open={isChatListOpen} onOpenChange={setIsChatListOpen}>
             <SheetTrigger asChild>
               <Button

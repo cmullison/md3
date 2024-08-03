@@ -4,11 +4,3 @@
     background: linear-gradient(45deg, #ff00ff, #00ffff);
     border: 0px solid white;
 }
-
-circle,
-rect,
-line {
-    stroke-width: 10px;
-    stroke-linecap: round;
-    fill: transparent;
-   }

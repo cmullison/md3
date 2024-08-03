@@ -26,3 +26,34 @@ export async function GET(
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+        const messages = await prismadb.message.deleteMany({
+      where: {
+        conversationId: params.id,
+      },
+      
+    });
+    const conversation = await prismadb.conversation.delete({
+      where: {
+        id: params.id,
+      },
+      include: {
+        messages: true,
+      },
+    });
+
+    if (!conversation) {
+      return NextResponse.json({ error: 'Conversation not found' }, { status: 404 });
+    }
+
+    return NextResponse.json(conversation);
+  } catch (error) {
+    console.error('Error deleting conversation:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}

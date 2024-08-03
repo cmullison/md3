@@ -86,3 +86,25 @@ export const signUp = async (formData: FormData) => {
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 };
+
+export const updateTitle = async (id: string, newTitle: string) => {
+  if (!newTitle || newTitle.trim().length === 0) {
+    return { success: false, message: "Title cannot be empty" };
+  }
+
+  try {
+    const updatedTitle = await prismadb.conversation.update({
+      where: { id },
+      data: { title: newTitle.trim() },
+    });
+
+    if (!updatedTitle) {
+      return { success: false, message: "Conversation not found" };
+    }
+
+    return { success: true, item: updatedTitle };
+  } catch (error) {
+    console.error("Error updating title:", error);
+    return { success: false, message: "Failed to update title. Please try again." };
+  }
+};

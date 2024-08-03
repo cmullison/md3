@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ComponentPropsWithoutRef } from "react";
 import CodeBlock from "./code-block";
 import { Avatar, AvatarFallback } from "../ui/avatar";
@@ -16,6 +16,9 @@ import {
 import { MessageSquare } from "lucide-react";
 import { ChatList } from "./chat-list";
 import { Button } from "../ui/button";
+import { updateTitle } from "@/app/actions";
+import toast from "react-hot-toast";
+import { debounce } from "lodash";
 
 interface Message {
   id: string;
@@ -37,14 +40,26 @@ interface SavedChatsProps {
   conversation: Conversation;
 }
 
-// ... (rest of the file remains the same)
 export default function SavedChats({ conversation }: SavedChatsProps) {
   const profile = useProfile();
 
+  const [conversationTitle, setConversationTitle] = useState(
+    conversation?.title || "New Conversation"
+  );
+  const [debouncedTitle, setDebouncedTitle] = useState(conversationTitle);
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const titleInputRef = useRef<HTMLInputElement>(null);
+
   const [isChatListOpen, setIsChatListOpen] = useState(false);
 
+  useEffect(() => {
+    if (isEditingTitle && titleInputRef.current) {
+      titleInputRef.current.focus();
+    }
+  }, [isEditingTitle]);
+
   if (!profile) {
-    return redirect("/login");
+    redirect("/login");
   }
 
   const renderMessageContent = (content: string) => {
@@ -82,11 +97,75 @@ export default function SavedChats({ conversation }: SavedChatsProps) {
 
   const initials = getInitials(profile.first_name, profile.last_name);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedUpdateTitle = useCallback(
+    debounce(async (id: string, title: string) => {
+      const result = await updateTitle(id, title);
+      if (!result.success) {
+        toast.error(result.message || "Failed to update title");
+      }
+    }, 1000),
+    []
+  );
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedTitle(conversationTitle);
+    }, 900); // Adjust this delay as needed
+
+    return () => clearTimeout(timer);
+  }, [conversationTitle]);
+
+  useEffect(() => {
+    if (conversation?.id && debouncedTitle !== conversation.title) {
+      debouncedUpdateTitle(conversation.id, debouncedTitle);
+    }
+  }, [
+    debouncedTitle,
+    conversation?.id,
+    conversation?.title,
+    debouncedUpdateTitle,
+  ]);
+
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setConversationTitle(e.target.value);
+  };
+
+  const handleTitleBlur = () => {
+    setIsEditingTitle(false);
+  };
+
+  const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" || e.key === "Tab") {
+      setIsEditingTitle(false);
+    }
+  };
+
   return (
     <>
       <div className="flex flex-col">
         <div className="bg-background text-foreground py-2 px-4 flex items-center justify-between">
           <div></div>
+          <div className="flex-1 text-center px-4">
+            {isEditingTitle ? (
+              <input
+                ref={titleInputRef}
+                type="text"
+                value={conversationTitle}
+                onChange={handleTitleChange}
+                onBlur={handleTitleBlur}
+                onKeyDown={handleTitleKeyDown}
+                className="bg-transparent border-none text-center focus:outline-none"
+              />
+            ) : (
+              <h2
+                onClick={() => setIsEditingTitle(true)}
+                className="cursor-pointer hover:underline"
+              >
+                {conversationTitle}
+              </h2>
+            )}
+          </div>
           <Sheet open={isChatListOpen} onOpenChange={setIsChatListOpen}>
             <SheetTrigger asChild>
               <Button
