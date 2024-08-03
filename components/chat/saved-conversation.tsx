@@ -13,12 +13,15 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
-import { MessageSquare } from "lucide-react";
+import { Menu, MessageSquare } from "lucide-react";
 import { ChatList } from "./chat-list";
 import { Button } from "../ui/button";
 import { updateTitle } from "@/app/actions";
 import toast from "react-hot-toast";
 import { debounce } from "lodash";
+import { ScrollArea } from "../ui/scroll-area";
+import { Input } from "../ui/input";
+import AuthButtonClient from "../nav/auth-button-client";
 
 interface Message {
   id: string;
@@ -94,7 +97,38 @@ export default function SavedChats({ conversation }: SavedChatsProps) {
     const lastInitial = lastName ? lastName.charAt(0).toUpperCase() : "";
     return `${firstInitial}${lastInitial}`;
   }
-
+  const Sidebar = () => (
+    <div className="h-full p-2">
+      <div className="flex items-center space-x-2 mb-6">
+        <AuthButtonClient variant="sidebar" />
+        <div>
+          <h2 className="font-semibold">
+            {profile?.first_name} {profile?.last_name}
+          </h2>
+          <p className="text-sm text-muted-foreground">{profile?.email}</p>
+        </div>
+      </div>
+      <Input className="mb-4" placeholder="Search" />
+      <ScrollArea className="h-[calc(100vh-200px)]">
+        <nav className="space-y-2">
+          {[
+            "Dashboard",
+            "Inbox",
+            "Notification",
+            "Ticket",
+            "Knowledge Base",
+            "Customer",
+            "Forum",
+            "Report",
+          ].map((item) => (
+            <Button key={item} variant="ghost" className="w-full justify-start">
+              {item}
+            </Button>
+          ))}
+        </nav>
+      </ScrollArea>
+    </div>
+  );
   const initials = getInitials(profile.first_name, profile.last_name);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -145,7 +179,16 @@ export default function SavedChats({ conversation }: SavedChatsProps) {
     <>
       <div className="flex flex-col">
         <div className="bg-background text-foreground py-2 px-4 flex items-center justify-between">
-          <div></div>
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline" size="icon" className="md:hidden">
+                <Menu className="h-4 w-4" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-64 p-0">
+              <Sidebar />
+            </SheetContent>
+          </Sheet>
           <div className="flex-1 text-center px-4">
             {isEditingTitle ? (
               <input

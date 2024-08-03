@@ -93,17 +93,6 @@ export default function Page() {
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button variant="outline" size="icon" className="md:hidden ml-4 mt-4">
-            <Menu className="h-4 w-4" />
-          </Button>
-        </SheetTrigger>
-        <SheetContent side="left" className="w-64 p-0">
-          <Sidebar />
-        </SheetContent>
-      </Sheet>
-
       {/* Desktop Sidebar */}
       <aside className="hidden md:block w-64 p-4 border-r bg-background">
         <Sidebar />
