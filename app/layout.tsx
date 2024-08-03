@@ -15,13 +15,14 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
+  // Also supported by less commonly used
+  // interactiveWidget: 'resizes-visual',
 };
 
 export const metadata: Metadata = {
   title: "Mulls Design",
   description: "UX, sound, and graphic design from Chris Mullison",
 };
-
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -33,6 +34,10 @@ export default async function RootLayout({
     data: { user },
   } = await supabase.auth.getUser();
 
+  if (!user) {
+    // return null; //use this if you want to keep the landing page separated
+    //redirect("/login");
+  }
   return (
     <html lang="en">
       <head>
@@ -42,25 +47,30 @@ export default async function RootLayout({
         />
       </head>
       <body className={inter.className}>
-        <ToastProvider />
-        <ModalProvider />
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem={true}
-          themes={["light", "dark", "masters", "masters-dark", "forest"]}
+        <div
+          className={`${
+            user
+              ? "hidden"
+              : "flex bg-black min-h-screen flex-col items-center justify-between p-24"
+          }`}
         >
-          {!user ? (
-            <div className="flex bg-black min-h-screen flex-col items-center justify-between p-24">
-              <div className="relative flex place-items-center">
-                {/* Gradient blur background */}
-                <EnhancedSVGLogo />
-              </div>
-            </div>
-          ) : (
-            children
-          )}
-        </ThemeProvider>
+          <div className="flex place-items-center ">
+            <EnhancedSVGLogo />
+          </div>
+        </div>
+
+        <div className="">
+          <ToastProvider />
+          <ModalProvider />
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem={true}
+            themes={["light", "dark", "masters", "masters-dark", "forest"]}
+          >
+            {children}
+          </ThemeProvider>
+        </div>
       </body>
     </html>
   );
