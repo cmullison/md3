@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { SubmitButton } from "./submit-button";
 import { useEffect, useRef, useState } from "react";
+import { signUp } from "@/app/actions";
 
 interface SignUpPageProps {
   searchParams?: { message?: string };
@@ -14,29 +15,12 @@ const SignUpPage: React.FC<SignUpPageProps> = ({ searchParams }) => {
   const [error, setError] = useState<string | null>(null);
   const firstDivRef = useRef<HTMLDivElement>(null);
 
-  const signUp = async (formData: FormData) => {
-    const first_name = formData.get("first_name") as string;
-    const last_name = formData.get("last_name") as string;
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-
+  const handleSignUp = async (formData: FormData) => {
     try {
-      const response = await fetch("/api/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ first_name, last_name, email, password }),
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "An error occurred during sign up");
-      }
-
-      router.push("/");
-    } catch (error) {
-      console.error(error);
+      await signUp(formData);
+      // If successful, the signUp function will redirect
+    } catch (err) {
+      setError("An error occurred during sign up. Please try again.");
     }
   };
 
@@ -59,13 +43,7 @@ const SignUpPage: React.FC<SignUpPageProps> = ({ searchParams }) => {
             Create your account
           </h2>
         </div>
-        <form
-          className="mt-8 space-y-6"
-          onSubmit={(e) => {
-            e.preventDefault();
-            signUp(new FormData(e.currentTarget));
-          }}
-        >
+        <form className="mt-8 space-y-6" action={handleSignUp}>
           <input type="hidden" name="remember" defaultValue="true" />
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
@@ -126,7 +104,6 @@ const SignUpPage: React.FC<SignUpPageProps> = ({ searchParams }) => {
 
           <div>
             <SubmitButton
-              formAction={signUp}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               pendingText="Signing Up..."
             >
