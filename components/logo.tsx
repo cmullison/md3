@@ -9,9 +9,9 @@ export default function Logo() {
       <motion.div
         className="box"
         animate={{
-          scale: [1, 2, 2, 1, 1],
+          scale: [0.25, 2.1, 1.3, 2, 0.5],
           rotate: [0, 0, 180, 180, 0],
-          borderRadius: ["0%", "0%", "50%", "50%", "0%"],
+          borderRadius: ["20%", "10%", "50%", "30%", "80%"],
         }}
         transition={{
           duration: 2,
