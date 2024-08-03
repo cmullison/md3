@@ -32,7 +32,7 @@ export async function POST(request) {
 
     const response = await anthropic.messages.create({
       model: "claude-3-5-sonnet-20240620",
-      max_tokens: 8000,
+      max_tokens: 4096,
       system: "You are a helpful coding assistant who is an expert in react, typescript, tailwind, shadcn-ui, next.js, and more. When giving code responses, always give the entire code for a file back if you are making corrections, unless otherwise asked. Ask clarifying questions when needed.",
       messages: [{ role: 'user', content: content }],
     });
