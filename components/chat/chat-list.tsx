@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { Conversation } from "@prisma/client"; // Make sure to import the Conversation type
-import axios from "axios";
-import { useParams } from "next/navigation";
+import { Conversation } from "@prisma/client";
+import { useParams, useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button"; // Assuming you're using shadcn-ui
 
 interface ChatListProps {
   isChatListOpen: boolean;
@@ -14,6 +14,7 @@ export const ChatList: React.FC<ChatListProps> = ({ isChatListOpen }) => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
   const params = useParams();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchConversations = async () => {
@@ -53,12 +54,22 @@ export const ChatList: React.FC<ChatListProps> = ({ isChatListOpen }) => {
     return <p>No conversations found.</p>;
   }
 
+  const handleConversationClick = (conversationId: string) => {
+    router.push(`/${params.siteId}/chat/${conversationId}`);
+  };
+
   return (
     <div className="overflow-y-scroll py-2">
-      <ul>
+      <ul className="space-y-2">
         {conversations.map((conversation) => (
-          <li key={conversation.id} className="px-2 py-2">
-            {conversation.title || "Untitled"}
+          <li key={conversation.id} className="px-2">
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-left"
+              onClick={() => handleConversationClick(conversation.id)}
+            >
+              {conversation.title || "Untitled"}
+            </Button>
           </li>
         ))}
       </ul>

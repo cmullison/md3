@@ -5,16 +5,9 @@ import MessageList from "./message-list";
 import MessageInput from "./message-input";
 import TypingIndicator from "./typing-indicator";
 import { Button } from "../ui/button";
-import {
-  AlertCircle,
-  Check,
-  MessageCircleIcon,
-  MessageSquare,
-  Save,
-} from "lucide-react";
+import { Save, MessageSquare } from "lucide-react";
 import EmptyChatState from "./empty-chat";
-import { createClient } from "@/utils/supabase/client";
-import { redirect, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useProfile } from "@/providers/profile-provider";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -26,12 +19,16 @@ import {
   SheetTrigger,
 } from "../ui/sheet";
 import { ChatList } from "./chat-list";
+import ImageUpload from "./image-upload";
+import TempImageDisplay from "./temp-image-display";
 
 interface Message {
   text: string;
   sender: "user" | "claude";
   tokenCount?: number;
   cost?: number;
+  image?: string;
+  tempImage?: string;
 }
 
 interface ChatInterfaceProps {
@@ -45,15 +42,29 @@ export default function ChatInterface({ user }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const typingIndicatorRef = useRef<HTMLDivElement | null>(null);
   const [isClaudeTyping, setIsClaudeTyping] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | undefined>(
+    undefined
+  );
+  const [tempImage, setTempImage] = useState<string | undefined>(undefined);
 
   const sendMessage = async (message: string) => {
-    setMessages([...messages, { text: message, sender: "user" }]);
+    const newMessage: Message = {
+      text: message,
+      sender: "user",
+      image: tempImage,
+    };
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
     setIsClaudeTyping(true);
+    setTempImage(undefined);
+
     try {
-      const response = await fetch("/api/[siteId]/chat/", {
+      const response = await fetch(`/api/${params.siteId}/chat/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message }),
+        body: JSON.stringify({
+          message,
+          imageUrl: tempImage,
+        }),
       });
 
       if (!response.ok) {
@@ -67,16 +78,17 @@ export default function ChatInterface({ user }: ChatInterfaceProps) {
         ...prevMessages,
         {
           text: formattedReply,
-          sender: "claude",
+          sender: "claude" as const,
           tokenCount: data.tokenCount,
-          cost: data.cost,
+          cost: Number(data.cost),
         },
       ]);
     } catch (error) {
       console.error("Error:", error);
-      // Handle error (e.g., show error message to user)
+      toast.error("Failed to send message");
     } finally {
       setIsClaudeTyping(false);
+      setTempImage(undefined);
     }
   };
 
@@ -97,7 +109,7 @@ export default function ChatInterface({ user }: ChatInterfaceProps) {
 
     const response = await axios.post(
       `/api/${params.siteId}/chat/conversations/`,
-      { userId, title, messages } // Send as an object, not stringified
+      { userId, title, messages }
     );
 
     if (!response.data) {
@@ -107,68 +119,76 @@ export default function ChatInterface({ user }: ChatInterfaceProps) {
     return response.data;
   }
 
+  const handleImageUpload = (imageUrl: string) => {
+    setTempImage(imageUrl);
+  };
+
+  const handleDeleteTempImage = () => {
+    setTempImage(undefined);
+  };
+
   return (
-    <div className="flex min-h-screen flex-col">
-      <div className="bg-background text-foreground py-2 px-4 flex items-center justify-between">
-        <Button
-          variant="outline"
-          size="sm"
-          className="flex items-center space-x-2"
-          onClick={() => {
-            if (user && user.id) {
-              saveConversation(user.id, "New Conversation", messages)
-                .then((savedConversation) => {
-                  toast.success("Conversation saved successfully");
-                  console.log(
-                    "Conversation saved successfully",
-                    savedConversation
-                  );
-                })
-                .catch((error) => {
-                  toast.error("Failed to save conversation");
-                  console.error("Failed to save conversation:", error);
-                });
-            } else {
-              toast.error("User or user ID is not available");
-              console.error("User or user ID is not available");
-            }
-          }}
-        >
-          <Save className="w-4 h-4" />
-          <span className="hidden sm:inline">Save Conversation</span>
-        </Button>
-        <Sheet open={isChatListOpen} onOpenChange={setIsChatListOpen}>
-          <SheetTrigger asChild>
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex items-center space-x-2"
-            >
-              <MessageSquare className="w-4 h-4" />
-              <span className="hidden sm:inline">Saved Chats</span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent className="overflow-y-scroll">
-            <SheetHeader>
-              <SheetTitle>Saved conversations</SheetTitle>
-            </SheetHeader>
-            <ChatList isChatListOpen={isChatListOpen} />
-          </SheetContent>
-        </Sheet>
+    <>
+      <div className="flex flex-col">
+        <div className="bg-background text-foreground py-2 px-4 flex items-center justify-between">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex items-center space-x-2"
+            onClick={() => {
+              if (user && user.id) {
+                saveConversation(user.id, "New Conversation", messages)
+                  .then((savedConversation) => {
+                    toast.success("Conversation saved successfully");
+                    console.log(
+                      "Conversation saved successfully",
+                      savedConversation
+                    );
+                  })
+                  .catch((error) => {
+                    toast.error("Failed to save conversation");
+                    console.error("Failed to save conversation:", error);
+                  });
+              } else {
+                toast.error("User or user ID is not available");
+                console.error("User or user ID is not available");
+              }
+            }}
+          >
+            <Save className="w-4 h-4" />
+            <span className="hidden sm:inline">Save</span>
+          </Button>
+          <Sheet open={isChatListOpen} onOpenChange={setIsChatListOpen}>
+            <SheetTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center space-x-2"
+              >
+                <MessageSquare className="w-4 h-4" />
+                <span className="hidden sm:inline">Chats</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent className="overflow-y-auto">
+              <SheetHeader>
+                <SheetTitle>Saved Conversations</SheetTitle>
+              </SheetHeader>
+              <ChatList isChatListOpen={isChatListOpen} />
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
 
       <div className="flex-1 overflow-hidden flex flex-col">
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto px-4 py-6">
           {messages.length === 0 ? (
-            <div className="flex-1 flex items-center justify-center p-8">
+            <div className="flex-1 flex items-center justify-center">
               <EmptyChatState />
             </div>
           ) : (
             <MessageList
               messages={messages}
-              onDeleteTempImage={function (): void {
-                throw new Error("Function not implemented.");
-              }}
+              onDeleteTempImage={handleDeleteTempImage}
             />
           )}
           <div
@@ -177,16 +197,30 @@ export default function ChatInterface({ user }: ChatInterfaceProps) {
           >
             <TypingIndicator />
           </div>
+          {tempImage && (
+            <div className="flex justify-end mt-2">
+              <TempImageDisplay
+                imageUrl={tempImage}
+                onDelete={handleDeleteTempImage}
+                width={150}
+                height={150}
+              />
+            </div>
+          )}
+        </div>
 
-          <div className="sticky bottom-0 bg-background">
-            <MessageInput onSendMessage={sendMessage} />
+        <div className="sticky bottom-0 bg-background border-t">
+          <div className="max-w-3xl mx-auto px-4 py-2">
+            <div className="flex items-center space-x-2">
+              <ImageUpload onImageUpload={handleImageUpload} />
+              <MessageInput onSendMessage={sendMessage} />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
-
 function formatCodeBlocks(text: string): string {
   return text.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
     const language = lang || "plaintext";

@@ -1,164 +1,157 @@
+"use client";
+
 import Link from "next/link";
-import { headers } from "next/headers";
-import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { SubmitButton } from "./submit-button";
-import prismadb from "@/lib/prismadb";
-import { NextResponse } from "next/server";
-import toast from "react-hot-toast";
-import axios from "axios";
-import { Resend } from "resend";
-import { EmailTemplate } from "@/components/email-template";
+import { useEffect, useRef, useState } from "react";
 
-export default function Signup({
-  searchParams,
-}: {
-  searchParams: { message: string };
-}) {
+interface SignUpPageProps {
+  searchParams?: { message?: string };
+}
+
+const SignUpPage: React.FC<SignUpPageProps> = ({ searchParams }) => {
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const firstDivRef = useRef<HTMLDivElement>(null);
+
   const signUp = async (formData: FormData) => {
-    "use server";
-
-    const origin = headers().get("origin");
     const first_name = formData.get("first_name") as string;
     const last_name = formData.get("last_name") as string;
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
-    const supabase = createClient();
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${origin}/auth/callback`,
-      },
-    });
-    if (error) {
-      console.log(error);
-      return redirect("/login?message=Could not authenticate user");
-    }
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return new NextResponse("Unauthorized", { status: 401 });
-    }
-    const profile = await prismadb.profile.create({
-      data: {
-        first_name,
-        last_name,
-        email,
-        userId: user.id,
-      },
-    });
+    try {
+      const response = await fetch("/api/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ first_name, last_name, email, password }),
+      });
 
-    const send = await prismadb.profile.findFirst({
-      where: {
-        userId: user.id,
-      },
-    });
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "An error occurred during sign up");
+      }
 
-    if (!user) {
-      return new NextResponse("Unauthenticated", { status: 401 });
+      router.push("/");
+    } catch (error) {
+      console.error(error);
     }
-    if (!send) {
-      return new NextResponse("Unauthenticated", { status: 401 });
-    }
-    const resend = new Resend(process.env.RESEND_API_KEY);
-
-    const { data } = await resend.emails.send({
-      from: "Chris <onboarding@liontreesgolf.com>",
-      to: send.email,
-      subject: "Welcome to Liontrees Golf!",
-      react: EmailTemplate({
-        firstName: send.first_name,
-        lastName: send.last_name,
-        createdAt: send.createdAt,
-      }) as React.ReactElement,
-    });
-    console.log(data);
-    if (error) {
-      console.log(error);
-    }
-
-    return redirect("/");
   };
+
+  useEffect(() => {
+    if (firstDivRef.current) {
+      setTimeout(() => {
+        firstDivRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 100);
+    }
+  }, []);
+
   return (
-    <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
-      <Link
-        href="/"
-        className="absolute left-8 top-8 py-2 px-4 rounded-md no-underline text-foreground bg-btn-background hover:bg-btn-background-hover flex items-center group text-sm"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1"
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div ref={firstDivRef} tabIndex={-1}>
+          <h2 className="mt-6 text-center text-3xl font-extrabold">
+            Create your account
+          </h2>
+        </div>
+        <form
+          className="mt-8 space-y-6"
+          onSubmit={(e) => {
+            e.preventDefault();
+            signUp(new FormData(e.currentTarget));
+          }}
         >
-          <polyline points="15 18 9 12 15 6" />
-        </svg>{" "}
-        Back
-      </Link>
+          <input type="hidden" name="remember" defaultValue="true" />
+          <div className="rounded-md shadow-sm -space-y-px">
+            <div>
+              <label htmlFor="first_name" className="sr-only">
+                First name
+              </label>
+              <input
+                id="first_name"
+                name="first_name"
+                type="text"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500  rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="First name"
+              />
+            </div>
+            <div>
+              <label htmlFor="last_name" className="sr-only">
+                Last name
+              </label>
+              <input
+                id="last_name"
+                name="last_name"
+                type="text"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500  focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Last name"
+              />
+            </div>
+            <div>
+              <label htmlFor="email-address" className="sr-only">
+                Email address
+              </label>
+              <input
+                id="email-address"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500  focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Email address"
+              />
+            </div>
+            <div>
+              <label htmlFor="password" className="sr-only">
+                Password
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="new-password"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500  rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Password"
+              />
+            </div>
+          </div>
 
-      <form className="flex-1 flex flex-col w-full justify-center gap-2 text-foreground">
-        <label className="text-md" htmlFor="first_name">
-          First name
-        </label>
-        <input
-          className="rounded-md px-4 py-2 bg-inherit border mb-6"
-          name="first_name"
-          placeholder=""
-          required
-        />
-        <label className="text-md" htmlFor="last_name">
-          Last name
-        </label>
-        <input
-          className="rounded-md px-4 py-2 bg-inherit border mb-6"
-          name="last_name"
-          placeholder=""
-          required
-        />
-        <label className="text-md" htmlFor="email">
-          Email
-        </label>
-        <input
-          className="rounded-md px-4 py-2 bg-inherit border mb-6"
-          name="email"
-          placeholder="you@example.com"
-          required
-        />
-        <label className="text-md" htmlFor="password">
-          Password
-        </label>
-        <input
-          className="rounded-md px-4 py-2 bg-inherit border mb-6"
-          type="password"
-          name="password"
-          placeholder="••••••••"
-          required
-        />
+          <div>
+            <SubmitButton
+              formAction={signUp}
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              pendingText="Signing Up..."
+            >
+              Sign Up
+            </SubmitButton>
+          </div>
+        </form>
 
-        <SubmitButton
-          formAction={signUp}
-          className="bg-secondary rounded-md px-4 py-2 text-primary mb-2"
-          pendingText="Signing Up..."
-          disabled
-        >
-          Sign Up
-        </SubmitButton>
+        <div className="text-center">
+          <Link
+            href="/login"
+            className="font-medium text-indigo-600 hover:text-indigo-500"
+          >
+            Already have an account? Sign in
+          </Link>
+        </div>
 
-        {searchParams?.message && (
-          <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
-            {searchParams.message}
+        {(error || searchParams?.message) && (
+          <p className="mt-4 p-4 bg-red-100 text-red-700 text-center rounded-lg">
+            {error || searchParams?.message}
           </p>
         )}
-      </form>
+      </div>
     </div>
   );
-}
+};
+
+export default SignUpPage;

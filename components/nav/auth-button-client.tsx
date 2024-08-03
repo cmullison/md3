@@ -13,13 +13,19 @@ import {
 import { UserIcon, LogOut, Sun, Moon, Laptop, Flag } from "lucide-react";
 import { useTheme } from "next-themes";
 
-const AuthButtonClient = () => {
+interface AuthButtonClientProps {
+  variant?: "default" | "sidebar";
+}
+
+const AuthButtonClient: React.FC<AuthButtonClientProps> = ({
+  variant = "default",
+}) => {
   const profile = useProfile();
   const params = useParams();
   const { setTheme } = useTheme();
 
   if (!profile) {
-    return null; // Instead of redirecting, we'll just return null
+    return null;
   }
 
   function getInitials(firstName: string, lastName: string): string {
@@ -31,7 +37,13 @@ const AuthButtonClient = () => {
   const initials = getInitials(profile.first_name, profile.last_name);
 
   return (
-    <div className="flex flex-row items-center lg:flex-row lg:gap-4">
+    <div
+      className={`flex ${
+        variant === "sidebar"
+          ? "flex-row items-center"
+          : "flex-row items-center lg:flex-row lg:gap-4"
+      }`}
+    >
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar className="w-12 h-12 cursor-pointer">
@@ -40,7 +52,7 @@ const AuthButtonClient = () => {
             </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
+        <DropdownMenuContent align={variant === "sidebar" ? "start" : "end"}>
           <DropdownMenuItem asChild>
             <Link href="#edit-profile">
               <UserIcon className="mr-2 h-4 w-4" />
@@ -71,9 +83,11 @@ const AuthButtonClient = () => {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <span className="hidden mt-2 flex-shrink-0 lg:mt-0 text-sm font-medium">
-        {profile.first_name} {profile.last_name}
-      </span>
+      {variant === "default" && (
+        <span className="hidden mt-2 flex-shrink-0 lg:mt-0 text-sm font-medium">
+          {profile.first_name} {profile.last_name}
+        </span>
+      )}
     </div>
   );
 };

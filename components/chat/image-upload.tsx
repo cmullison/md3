@@ -64,14 +64,14 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onImageUpload }) => {
           </Button>
         </TooltipTrigger>
         <TooltipContent>
-          <p>Upload an image</p>
+          <p>Upload an image (JPEG or PNG)</p>
         </TooltipContent>
       </Tooltip>
       <input
         type="file"
         ref={fileInputRef}
         onChange={handleFileChange}
-        accept="image/*"
+        accept="image/jpeg,image/png,image/gif,image/webp"
         className="hidden"
       />
     </TooltipProvider>

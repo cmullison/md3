@@ -42,7 +42,7 @@ export default function PageSwitcher({ className }: PageSwitcherProps) {
     { href: `/${params.siteId}/blog`, label: "Blog" },
     { href: `/${params.siteId}/products`, label: "Products" },
     { href: `/${params.siteId}/orders`, label: "Orders" },
-    { href: `/${params.siteId}/vision`, label: "Chat" },
+    { href: `/${params.siteId}/chat`, label: "Chat" },
     { href: `/${params.siteId}/settings`, label: "Settings" },
   ];
 

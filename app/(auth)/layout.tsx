@@ -13,7 +13,5 @@ export default async function AuthLayout({
   if (user) {
     return redirect("/");
   }
-  return (
-    <div className="flex items-center justify-center h-screen">{children}</div>
-  );
+  return <div className="flex items-center justify-center">{children}</div>;
 }

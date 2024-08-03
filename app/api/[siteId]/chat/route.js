@@ -1,7 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { NextResponse } from 'next/server';
 
-const COST_PER_INPUT_TOKEN = 0.01; // Example cost, adjust as needed
+const COST_PER_INPUT_TOKEN = 0.01;
 const COST_PER_OUTPUT_TOKEN = 0.03;
 
 const anthropic = new Anthropic({
@@ -10,29 +10,63 @@ const anthropic = new Anthropic({
 
 export async function POST(request) {
   try {
-    const { message } = await request.json();
+    const { message, imageUrl } = await request.json();
+
+    let content = [{ type: 'text', text: message }];
+
+    if (imageUrl) {
+      const image_media_type = await getImageMediaType(imageUrl);
+      const image_response = await fetch(imageUrl);
+      const image_array_buffer = await image_response.arrayBuffer();
+      const image_data = Buffer.from(image_array_buffer).toString('base64');
+
+      content.unshift({
+        type: 'image',
+        source: {
+          type: 'base64',
+          media_type: image_media_type,
+          data: image_data,
+        }
+      });
+    }
+
     const response = await anthropic.messages.create({
       model: "claude-3-5-sonnet-20240620",
       max_tokens: 4000,
-      system: "You are a helpful coding assistant who is an expert in react, typescript, tailwind, next.js, and more. You will primarily be asked for code, and questions related to it. Be concise with your responses and ask for clarifying questions when needed. When sending code, include the full code for that file unless otherwise asked.",
-      messages: [{ role: 'user', content: message }],
+      system: "You are a helpful coding assistant who is an expert in react, typescript, tailwind, shadcn-ui, next.js, and more. When giving code responses, always give the entire code for a file back if you are making corrections, unless otherwise asked. Ask clarifying questions when needed.",
+      messages: [{ role: 'user', content: content }],
     });
 
-    // Calculate token count and cost
     const inputTokens = response.usage.input_tokens;
     const outputTokens = response.usage.output_tokens;
     const totalTokens = inputTokens + outputTokens;
-    const inputCost = (response.usage.input_tokens / 1000) * COST_PER_INPUT_TOKEN;
-    const outputCost = (response.usage.output_tokens / 1000) * COST_PER_OUTPUT_TOKEN;
+    const inputCost = (inputTokens / 1000) * COST_PER_INPUT_TOKEN;
+    const outputCost = (outputTokens / 1000) * COST_PER_OUTPUT_TOKEN;
     const cost = inputCost + outputCost;
 
     return NextResponse.json({
       reply: response.content[0].text,
       tokenCount: totalTokens,
-      cost: cost.toFixed(6), // Round to 6 decimal places
+      cost: cost,
     });
   } catch (error) {
     console.error('Error:', error);
     return NextResponse.json({ error: 'Error communicating with Claude AI' }, { status: 500 });
+  }
+}
+
+async function getImageMediaType(url) {
+  const response = await fetch(url, { method: 'HEAD' });
+  const contentType = response.headers.get('Content-Type');
+  if (contentType.includes('jpeg') || contentType.includes('jpg')) {
+    return 'image/jpeg';
+  } else if (contentType.includes('png') || contentType.includes('PNG')) {
+    return 'image/png';
+    } else if (contentType.includes('gif')) {
+    return 'image/gif';
+    } else if (contentType.includes('webp')) {
+    return 'image/webp';
+  } else {
+    throw new Error('Unsupported image type');
   }
 }

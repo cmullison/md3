@@ -57,9 +57,9 @@ export function MainNav({
       active: pathname === `/${params.siteId}/orders`,
     },
     {
-      href: `/${params.siteId}/vision`,
+      href: `/${params.siteId}/chat`,
       label: "Chat",
-      active: pathname === `/${params.siteId}/vision`,
+      active: pathname === `/${params.siteId}/chat`,
     },
     {
       href: `/${params.siteId}/settings`,
