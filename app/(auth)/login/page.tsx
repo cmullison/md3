@@ -16,20 +16,19 @@ const SignInPage: React.FC<SignInPageProps> = ({ searchParams }) => {
   const [error, setError] = useState<string | null>(null);
   const firstDivRef = useRef<HTMLDivElement>(null);
   const supabase = createClient();
+
   const handleSignIn = async (formData: FormData) => {
     signIn;
   };
 
   const handleGoogleSignIn = async () => {
     try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
-      });
-
-      if (error) throw error;
+      const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${
+        process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
+      }&redirect_uri=${encodeURIComponent(
+        `${window.location.origin}/auth/callback`
+      )}&response_type=code&scope=openid%20email%20profile`;
+      window.location.href = googleAuthUrl;
     } catch (error) {
       console.error("Error signing in with Google:", error);
       setError("Failed to sign in with Google. Please try again.");
