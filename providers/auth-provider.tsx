@@ -36,8 +36,8 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         toast.error("Something went wrong");
         console.log(user);
         //may need to change
-        redirect("/");
-        //return null;
+        //redirect("/");
+        return null;
       }
 
       const response = await fetch(`/api/profile?userId=${user.id}`);

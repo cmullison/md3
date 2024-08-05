@@ -15,9 +15,25 @@ const SignInPage: React.FC<SignInPageProps> = ({ searchParams }) => {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const firstDivRef = useRef<HTMLDivElement>(null);
-
+  const supabase = createClient();
   const handleSignIn = async (formData: FormData) => {
     signIn;
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+
+      if (error) throw error;
+    } catch (error) {
+      console.error("Error signing in with Google:", error);
+      setError("Failed to sign in with Google. Please try again.");
+    }
   };
 
   useEffect(() => {
@@ -102,6 +118,15 @@ const SignInPage: React.FC<SignInPageProps> = ({ searchParams }) => {
             </SubmitButton>
           </div>
         </form>
+
+        <div>
+          <button
+            onClick={handleGoogleSignIn}
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+          >
+            Sign in with Google
+          </button>
+        </div>
 
         <div className="text-center">
           <Link

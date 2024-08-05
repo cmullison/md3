@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/providers/theme-provider";
 import { ToastProvider } from "@/providers/toast-provider";
 import { createClient } from "@/utils/supabase/server";
 import dynamic from "next/dynamic";
+import ColorShiftingHeader from "@/components/gradient";
 
 const Logo = dynamic(() => import("@/components/logo"), { ssr: false });
 
@@ -64,6 +65,7 @@ export default async function RootLayout({
             }`}
           >
             <div className="flex my-auto items-center ">
+              <ColorShiftingHeader />
               <Logo />
             </div>
           </div>
