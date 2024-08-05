@@ -31,7 +31,7 @@ const SignInPage: React.FC<SignInPageProps> = ({ searchParams }) => {
       window.location.href = googleAuthUrl;
     } catch (error) {
       console.error("Error signing in with Google:", error);
-      setError("Failed to sign in with Google. Please try again.");
+      setError("Sign in with Google failed. Please try again.");
     }
   };
 
