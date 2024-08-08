@@ -1,14 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { SubmitButton } from "./submit-button";
 import { useEffect, useRef, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { signIn } from "@/app/actions";
+import { Button } from "@/components/ui/button"; // Assuming you're using shadcn/ui
 
 interface SignInPageProps {
   searchParams?: { message?: string };
+}
+
+interface SignInResult {
+  error?: string;
 }
 
 const SignInPage: React.FC<SignInPageProps> = ({ searchParams }) => {
@@ -18,17 +23,21 @@ const SignInPage: React.FC<SignInPageProps> = ({ searchParams }) => {
   const supabase = createClient();
 
   const handleSignIn = async (formData: FormData) => {
-    signIn;
+    const result = (await signIn(formData)) as SignInResult | undefined;
+    if (result?.error) {
+      setError(result.error);
+    }
   };
 
   const handleGoogleSignIn = async () => {
     try {
-      const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${
-        process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
-      }&redirect_uri=${encodeURIComponent(
-        `${window.location.origin}/auth/callback`
-      )}&response_type=code&scope=openid%20email%20profile`;
-      window.location.href = googleAuthUrl;
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/`,
+        },
+      });
+      if (error) throw error;
     } catch (error) {
       console.error("Error signing in with Google:", error);
       setError("Failed to sign in with Google. Please try again.");
@@ -58,7 +67,7 @@ const SignInPage: React.FC<SignInPageProps> = ({ searchParams }) => {
           className="mt-8 space-y-6"
           onSubmit={(e) => {
             e.preventDefault();
-            signIn(new FormData(e.currentTarget));
+            handleSignIn(new FormData(e.currentTarget));
           }}
         >
           <input type="hidden" name="remember" defaultValue="true" />
@@ -73,7 +82,7 @@ const SignInPage: React.FC<SignInPageProps> = ({ searchParams }) => {
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500  rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Email address"
               />
             </div>
@@ -87,23 +96,9 @@ const SignInPage: React.FC<SignInPageProps> = ({ searchParams }) => {
                 type="password"
                 autoComplete="current-password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500  rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Password"
               />
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="hidden flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-              />
-              <label htmlFor="remember-me" className="hiddenml-2 block text-sm">
-                Remember me
-              </label>
             </div>
           </div>
 
@@ -119,12 +114,12 @@ const SignInPage: React.FC<SignInPageProps> = ({ searchParams }) => {
         </form>
 
         <div>
-          <button
+          <Button
             onClick={handleGoogleSignIn}
             className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
           >
             Sign in with Google
-          </button>
+          </Button>
         </div>
 
         <div className="text-center">

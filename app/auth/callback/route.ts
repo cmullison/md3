@@ -2,10 +2,8 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { NextResponse } from "next/server";
 import { PrismaClient } from '@prisma/client';
-import { OAuth2Client } from 'google-auth-library';
 
 const prisma = new PrismaClient();
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
@@ -13,73 +11,54 @@ export async function GET(request: Request) {
   const origin = requestUrl.origin;
 
   if (code) {
-    try {
-      const { tokens } = await client.getToken({
-        code,
-        redirect_uri: `${origin}/auth/callback`,
-      });
+    const supabase = createClient();
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
-      if (!tokens.id_token) {
-        throw new Error('ID token is missing');
-      }
+    if (error) {
+      console.error('Error exchanging code for session:', error);
+      return redirect('/auth/error');
+    }
 
-      const ticket = await client.verifyIdToken({
-        idToken: tokens.id_token,
-        audience: process.env.GOOGLE_CLIENT_ID,
-      });
+    if (data.user) {
+      const { user } = data;
+      
+      // Extract first and last name from user metadata
+      const firstName = user.user_metadata?.full_name?.split(' ')[0] || '';
+      const lastName = user.user_metadata?.full_name?.split(' ').slice(1).join(' ') || '';
 
-      const payload = ticket.getPayload();
-
-      if (payload && payload.email) {
-        const supabase = createClient();
-        const { data: { user }, error } = await supabase.auth.signUp({
-          email: payload.email,
-          password: tokens.access_token || '', // Use access token as password, fallback to empty string if undefined
+      try {
+        // Check if profile already exists
+        const existingProfile = await prisma.profile.findFirst({
+          where: { userId: user.id },
         });
 
-        if (error) {
-          console.error('Error creating user in Supabase:', error);
-          return redirect('/auth/error');
+        if (!existingProfile) {
+          // Create new profile
+          await prisma.profile.create({
+            data: {
+              userId: user.id,
+              first_name: firstName,
+              last_name: lastName,
+              email: user.email || '', // Provide a default empty string if email is undefined
+            },
+          });
+        } else {
+          // Update existing profile
+          await prisma.profile.update({
+            where: { id: existingProfile.id }, // Use the id field instead of userId
+            data: {
+              first_name: firstName,
+              last_name: lastName,
+              email: user.email || '', // Provide a default empty string if email is undefined
+            },
+          });
         }
-
-        if (user) {
-          const firstName = payload.given_name || '';
-          const lastName = payload.family_name || '';
-
-          try {
-            const existingProfile = await prisma.profile.findFirst({
-              where: { userId: user.id },
-            });
-
-            if (!existingProfile) {
-              await prisma.profile.create({
-                data: {
-                  userId: user.id,
-                  first_name: firstName,
-                  last_name: lastName,
-                  email: payload.email,
-                },
-              });
-            } else {
-              await prisma.profile.update({
-                where: { id: existingProfile.id },
-                data: {
-                  first_name: firstName,
-                  last_name: lastName,
-                  email: payload.email,
-                },
-              });
-            }
-          } catch (error) {
-            console.error('Error updating profile:', error);
-          }
-        }
+      } catch (error) {
+        console.error('Error updating profile:', error);
       }
-    } catch (error) {
-      console.error('Error during Google authentication:', error);
-      return redirect('/auth/error');
     }
   }
 
+  // URL to redirect to after sign up process completes
   return redirect(`/`);
 }
