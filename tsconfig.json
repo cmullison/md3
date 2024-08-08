@@ -23,6 +23,6 @@
       "@/*": ["./*"]
     }
   },
-   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "components/MessageList.tsx", "app/api/[siteId]/chat/conversations/route.ts", "app/api/[siteId]/vision/route.ts", "components/md.js", "app/api/analyze-video/route.js"],
   "exclude": ["node_modules"]
 }
