@@ -1,7 +1,6 @@
 import ChatInterface from "@/components/chat/chat-interface";
 import EmailTest from "@/components/email-test";
 import ColorShiftingHeader from "@/components/gradient";
-import Logo from "@/components/logo";
 
 export default function Page() {
   return (
