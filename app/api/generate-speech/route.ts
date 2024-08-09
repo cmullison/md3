@@ -1,11 +1,7 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
-import fs from 'fs/promises';
-import path from 'path';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const openai = new OpenAI();
 
 export async function POST(req: Request) {
   try {
@@ -18,12 +14,13 @@ export async function POST(req: Request) {
     });
 
     const buffer = Buffer.from(await mp3.arrayBuffer());
-    const fileName = `speech_${Date.now()}.mp3`;
-    const filePath = path.join(process.cwd(), 'public', fileName);
-    
-    await fs.writeFile(filePath, buffer);
 
-    return NextResponse.json({ audioUrl: `/${fileName}` });
+    return new Response(buffer, {
+      headers: {
+        'Content-Type': 'audio/mpeg',
+        'Content-Disposition': 'inline; filename="speech.mp3"',
+      },
+    });
   } catch (error) {
     console.error('Error generating speech:', error);
     return NextResponse.json(

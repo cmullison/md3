@@ -17,8 +17,9 @@ const VideoToFrames: React.FC<VideoToFramesProps> = ({ frameInterval }) => {
   const [isVideoReady, setIsVideoReady] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
   const [audioSrc, setAudioSrc] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false); //
-  const captureFrame = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const captureFrame = (): string | null => {
     if (videoRef.current && canvasRef.current) {
       const canvas = canvasRef.current;
       const video = videoRef.current;
@@ -35,68 +36,103 @@ const VideoToFrames: React.FC<VideoToFramesProps> = ({ frameInterval }) => {
         ctx.drawImage(video, 0, 0, width, height);
         const frameDataUrl = canvas.toDataURL("image/jpeg");
         const base64Data = frameDataUrl.split(",")[1];
-        setFrames((prevFrames) => [...prevFrames, base64Data]);
         console.log("Frame captured at time:", video.currentTime);
+        return base64Data;
       }
     }
+    return null;
   };
 
-  const processVideo = () => {
+  const processVideo = async () => {
     if (videoRef.current && isVideoReady) {
       console.log("Starting video processing");
+      const video = videoRef.current;
+      const duration = video.duration;
+      let numberOfFrames = 10;
+
+      const minFrameInterval = 0.5;
+      if (duration < minFrameInterval * numberOfFrames) {
+        numberOfFrames = Math.floor(duration / minFrameInterval);
+      }
+
+      const frameInterval = duration / (numberOfFrames - 1);
+      const captureTimes = Array.from(
+        { length: numberOfFrames },
+        (_, i) => i * frameInterval
+      );
+
       setIsProcessing(true);
-      setFrames([]);
-      videoRef.current.currentTime = 0;
+      const capturedFrames: string[] = [];
 
-      const captureInterval = frameInterval / 1000;
+      for (let i = 0; i < captureTimes.length; i++) {
+        video.currentTime = captureTimes[i];
+        await new Promise<void>((resolve) => {
+          const handleTimeUpdate = () => {
+            const frame = captureFrame();
+            if (frame) {
+              capturedFrames.push(frame);
+              console.log(`Captured frame ${i + 1}/${captureTimes.length}`);
+            }
+            video.removeEventListener("timeupdate", handleTimeUpdate);
+            resolve();
+          };
+          video.addEventListener("timeupdate", handleTimeUpdate);
+        });
+      }
 
-      const processFrame = () => {
-        if (
-          videoRef.current &&
-          videoRef.current.currentTime < videoRef.current.duration
-        ) {
-          captureFrame();
-          videoRef.current.currentTime += captureInterval;
-          setTimeout(processFrame, frameInterval);
-        } else {
-          setIsProcessing(false);
-          console.log("Video processing ended");
-          sendFramesForAnalysis();
-        }
-      };
-
-      videoRef.current.play();
-      processFrame();
+      setFrames(capturedFrames);
+      setIsProcessing(false);
+      console.log(
+        "Frame capture complete. Total frames:",
+        capturedFrames.length
+      );
+      sendFramesForAnalysis(capturedFrames);
     } else {
       console.error("Video is not ready for processing");
     }
   };
 
-  const sendFramesForAnalysis = async () => {
+  const sendFramesForAnalysis = async (capturedFrames: string[]) => {
+    console.log("Sending frames for analysis:", capturedFrames.length);
+    if (capturedFrames.length === 0) {
+      console.error("No frames to analyze");
+      return;
+    }
+    setIsLoading(true);
     try {
-      const responsea = await axios.post("/api/analyze-frames", { frames });
-      // Extract the 'content' from the response
-      const feedback = responsea.data;
+      const response = await axios.post("/api/analyze-frames", {
+        frames: capturedFrames,
+      });
+      const feedback = response.data;
       if (feedback.result && feedback.result.content) {
+        const audioUrl = await generateSpeech(feedback.result.content);
         setAnalysisResult(feedback.result.content);
-        generateSpeech(feedback.result.content);
-        setIsLoading(false);
+        setAudioSrc(audioUrl);
       } else {
         setAnalysisResult("No description available");
       }
     } catch (error) {
       console.error("Error analyzing frames:", error);
       setAnalysisResult("Error occurred during analysis");
+    } finally {
+      setIsLoading(false);
     }
   };
-  const generateSpeech = async (text: string) => {
+
+  const generateSpeech = async (text: string): Promise<string> => {
     try {
-      const responseb = await axios.post("/api/generate-speech", { text });
-      setAudioSrc(responseb.data.audioUrl);
+      const response = await axios.post(
+        "/api/generate-speech",
+        { text },
+        { responseType: "blob" }
+      );
+      return URL.createObjectURL(response.data);
     } catch (error) {
       console.error("Error generating speech:", error);
+      return "";
     }
   };
+
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -157,40 +193,26 @@ const VideoToFrames: React.FC<VideoToFramesProps> = ({ frameInterval }) => {
         disabled={isProcessing || !videoSrc || !isVideoReady}
         className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400"
       >
-        {isLoading ? "Processing..." : "Split Video into Frames"}
+        {isLoading ? "Processing..." : "Analyze Swing"}
       </button>
-      <div className="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {frames.map((frame, index) => (
-          <Image
-            key={index}
-            src={`data:image/jpeg;base64,${frame}`}
-            alt={`Frame ${index}`}
-            width={0}
-            height={0}
-            className="w-full h-auto"
-          />
-        ))}
-      </div>
-      {isLoading && <p>Checking out your swing...</p>}
-      {analysisResult && (
-        <div className={`${isLoading && "hidden"} mt-4`}>
+      {isLoading && <p>Analyzing your swing...</p>}
+      {!isLoading && analysisResult && audioSrc && (
+        <div className="mt-4">
           <h2 className="text-xl font-bold mt-6">Swing analysis</h2>
-          {audioSrc && (
-            <div className="my-6">
-              <audio controls src={audioSrc} className="mt-2">
-                Your browser does not support the audio element.
-              </audio>
-            </div>
-          )}
+          <div className="my-6">
+            <audio controls src={audioSrc} className="mt-2">
+              Your browser does not support the audio element.
+            </audio>
+          </div>
           <div
-            className={`${isLoading && "hidden"} formatted-text`}
+            className="formatted-text"
             dangerouslySetInnerHTML={{
               __html: analysisResult
                 .replace(
                   /###\s*(.*)/g,
                   '<h3 class="text-lg mt-6 font-semibold">$1</h3>'
-                ) // Replace ### with <h3> tags
-                .replace(/\n/g, '<p class="mt-2"></p>'), // Replace newlines with <p> tags for paragraphs
+                )
+                .replace(/\n/g, '<p class="mt-2"></p>'),
             }}
           />
         </div>
