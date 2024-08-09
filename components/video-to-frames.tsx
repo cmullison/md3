@@ -24,7 +24,7 @@ const VideoToFrames: React.FC<VideoToFramesProps> = ({ frameInterval }) => {
       const video = videoRef.current;
       const aspectRatio = video.videoWidth / video.videoHeight;
 
-      const maxWidth = 500;
+      const maxWidth = 800;
       const width = Math.min(video.videoWidth, maxWidth);
       const height = width / aspectRatio;
 
@@ -45,7 +45,6 @@ const VideoToFrames: React.FC<VideoToFramesProps> = ({ frameInterval }) => {
     if (videoRef.current && isVideoReady) {
       console.log("Starting video processing");
       setIsProcessing(true);
-      setIsLoading(true);
       setFrames([]);
       videoRef.current.currentTime = 0;
 
@@ -80,7 +79,6 @@ const VideoToFrames: React.FC<VideoToFramesProps> = ({ frameInterval }) => {
       const feedback = responsea.data;
       if (feedback.result && feedback.result.content) {
         setAnalysisResult(feedback.result.content);
-        setIsLoading(true);
         generateSpeech(feedback.result.content);
         setIsLoading(false);
       } else {
@@ -156,7 +154,7 @@ const VideoToFrames: React.FC<VideoToFramesProps> = ({ frameInterval }) => {
       <canvas ref={canvasRef} className="hidden" />
       <button
         onClick={processVideo}
-        disabled={isProcessing || !videoSrc || !isVideoReady || isLoading}
+        disabled={isProcessing || !videoSrc || !isVideoReady}
         className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400"
       >
         {isLoading ? "Processing..." : "Split Video into Frames"}
@@ -175,7 +173,7 @@ const VideoToFrames: React.FC<VideoToFramesProps> = ({ frameInterval }) => {
       </div>
       {isLoading && <p>Checking out your swing...</p>}
       {analysisResult && (
-        <div className={isLoading ? "hidden" : "mt-4"}>
+        <div className={`${isLoading && "hidden"} mt-4`}>
           <h2 className="text-xl font-bold mt-6">Swing analysis</h2>
           {audioSrc && (
             <div className="my-6">
@@ -185,7 +183,7 @@ const VideoToFrames: React.FC<VideoToFramesProps> = ({ frameInterval }) => {
             </div>
           )}
           <div
-            className="formatted-text"
+            className={`${isLoading && "hidden"} formatted-text`}
             dangerouslySetInnerHTML={{
               __html: analysisResult
                 .replace(
