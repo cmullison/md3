@@ -25,6 +25,130 @@
     transform: translateY(20px);
   }
 }
+.prose-golf {
+  max-width: none;
+  /* Allow the content to use the full width */
+  font-family: Arial, sans-serif;
+  /* Choose a readable font */
+  line-height: 1.6;
+  /* Improve readability with increased line height */
+  color: var(--primary-foreground);
+  /* Use a dark color for better contrast */
+  padding: 1rem;
+  /* Add padding for better spacing around content */
+  margin: 1rem 0;
+  /* Add vertical margin between paragraphs */
+  text-align: left;
+  /* Align text to the left for better readability */
+
+  /* Headings */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin-top: 1.5rem;
+    /* Add margin above headings */
+    margin-bottom: 0.5rem;
+    /* Add margin below headings */
+    font-weight: bold;
+    /* Make headings stand out */
+    color: var(--primary-foreground);
+    /* Slightly darker color for headings */
+  }
+
+  /* Paragraphs */
+  p {
+    margin: 0 0 1rem 0;
+    /* Add margin below paragraphs */
+    text-align: justify;
+    /* Justify text for a cleaner look */
+  }
+
+  /* Lists */
+  ul,
+  ol {
+    margin: 0 0 1rem 1.5rem;
+    /* Add margin below and left for lists */
+    padding: 0;
+    /* Remove default padding */
+  }
+
+  li {
+    margin-bottom: 0.5rem;
+    /* Add margin between list items */
+  }
+
+  /* Links */
+  a {
+    color: var(--secondary-foreground);
+    /* Use a distinct color for links */
+    text-decoration: underline;
+    /* Underline links for better visibility */
+  }
+
+  a:hover {
+    text-decoration: none;
+    /* Remove underline on hover for a cleaner look */
+  }
+
+  /* Blockquotes */
+  blockquote {
+    border-left: 4px solid --primary-foreground;
+    /* Add a border for blockquotes */
+    padding-left: 1rem;
+    /* Add padding inside blockquote */
+    margin: 0 0 1rem 0;
+    /* Add margin below blockquotes */
+    font-style: italic;
+    /* Italicize blockquote text */
+    color: var(--secondary-foreground);
+    /* Use a lighter color for blockquote text */
+  }
+
+  /* Code */
+  code {
+    background-color: var(--background);
+    /* Light background for code blocks */
+    padding: 0.2rem 0.4rem;
+    /* Padding around code text */
+    border-radius: 3px;
+    /* Round corners for code blocks */
+    font-size: 0.9rem;
+    /* Slightly smaller font size */
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    /* Ensure tables use full width */
+    border-collapse: collapse;
+    /* Collapse borders for cleaner look */
+    margin: 1rem 0;
+    /* Add margin around tables */
+  }
+
+  th,
+  td {
+    padding: 0.75rem;
+    /* Add padding inside table cells */
+    border: 1px solid #ddd;
+    /* Add border around cells */
+  }
+
+  th {
+    background-color: #f4f4f4;
+    /* Light background for table headers */
+    text-align: left;
+    /* Align table headers to the left */
+  }
+
+  td {
+    text-align: left;
+    /* Align table data to the left */
+  }
+}
 
 .fade-in-up {
   animation: fadeInUp 0.5s ease-out forwards;
