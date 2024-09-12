@@ -205,21 +205,7 @@ body,
   @apply my-4 ml-8;
 }
 
-.prose ol {
-  @apply list-decimal;
-}
 
-.prose ul {
-  @apply list-disc;
-}
-
-.prose li {
-  @apply my-1;
-}
-
-.prose li::marker {
-  @apply text-primary-foreground;
-}
 
 
 
