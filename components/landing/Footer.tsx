@@ -1,27 +1,14 @@
 import Link from "next/link";
 import { FaTwitter, FaLinkedin, FaGithub } from "react-icons/fa";
-import { useTheme } from "next-themes";
 
 export default function Footer() {
-  const { theme } = useTheme();
-
   return (
-    <footer
-      className={`${
-        theme === "dark"
-          ? "bg-royal-900 text-white"
-          : "bg-gray-100 text-gray-800"
-      } py-12 relative overflow-hidden`}
-    >
+    <footer className="bg-background text-foreground py-12 relative overflow-hidden">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <h3 className="text-xl font-bold mb-4">Company Name</h3>
-            <p
-              className={`${
-                theme === "dark" ? "text-royal-200" : "text-gray-600"
-              }`}
-            >
+            <p className="text-muted-foreground">
               Crafting exceptional digital experiences with precision and
               creativity.
             </p>
@@ -33,11 +20,7 @@ export default function Footer() {
                 <li key={item}>
                   <Link
                     href={`/${item.toLowerCase().replace(" ", "")}`}
-                    className={`${
-                      theme === "dark"
-                        ? "text-royal-200 hover:text-white"
-                        : "text-gray-600 hover:text-gray-800"
-                    } transition-colors`}
+                    className="text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {item}
                   </Link>
@@ -53,12 +36,7 @@ export default function Footer() {
               "Phone: (555) 123-4567",
               "Email: info@companyname.com",
             ].map((item) => (
-              <p
-                key={item}
-                className={`${
-                  theme === "dark" ? "text-royal-200" : "text-gray-600"
-                }`}
-              >
+              <p key={item} className="text-muted-foreground">
                 {item}
               </p>
             ))}
@@ -70,11 +48,7 @@ export default function Footer() {
                 <a
                   key={index}
                   href="#"
-                  className={`${
-                    theme === "dark"
-                      ? "text-royal-200 hover:text-white"
-                      : "text-gray-600 hover:text-gray-800"
-                  } transition-colors`}
+                  className="text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <Icon size={24} />
                 </a>
@@ -82,13 +56,7 @@ export default function Footer() {
             </div>
           </div>
         </div>
-        <div
-          className={`mt-8 pt-8 border-t ${
-            theme === "dark"
-              ? "border-royal-700 text-royal-300"
-              : "border-gray-300 text-gray-500"
-          } text-center`}
-        >
+        <div className="mt-8 pt-8 border-t border-border text-muted-foreground text-center">
           <p>
             &copy; {new Date().getFullYear()} Company Name. All rights reserved.
           </p>

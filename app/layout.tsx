@@ -50,7 +50,7 @@ export default async function RootLayout({
         <ModalProvider />
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="dark"
           enableSystem={true}
           themes={["light", "dark", "masters", "masters-dark", "forest"]}
         >

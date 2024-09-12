@@ -127,7 +127,7 @@ export default function MainContent() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className={cn("container mx-auto py-10 sm:py-20 text-center relative")}
+        className={cn("mx-auto py-10 sm:py-20 text-center relative")}
       >
         <div
           ref={particlesContainerRef}
@@ -154,15 +154,9 @@ export default function MainContent() {
             )}
           >
             <span className="relative inline-block">
-              <span className="absolute -inset-1 bg-gradient-to-r from-primary to-primary rounded-lg blur-lg opacity-75 animate-pulse"></span>
+              <span className="absolute -inset-1 bg-gradient-to-r from-primary to-primary rounded-lg blur-lg opacity-65 animate-pulse"></span>
               <span
-                className={`relative text-transparent bg-clip-text bg-gradient-to-b ${
-                  theme === "dark"
-                    ? "from-white to-royal-200 "
-                    : theme === "light"
-                    ? "from-royal-500 to-royal-800"
-                    : ""
-                }`}
+                className={`relative text-transparent bg-clip-text bg-gradient-to-b from-royal-500 to-secondary-foreground`}
               >
                 Placeholder
               </span>

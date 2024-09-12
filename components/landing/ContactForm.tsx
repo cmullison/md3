@@ -141,7 +141,7 @@ export default function ContactForm({ onSubmitSuccess }: ContactFormProps) {
               whileTap={{ scale: 0.95 }}
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-bold py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-all duration-300"
+              className="w-full bg-gradient-to-r from-primary to-primary/80 text-white font-bold py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-all duration-300"
             >
               {isSubmitting ? <LoadingSpinner /> : "Send Message"}
             </motion.button>

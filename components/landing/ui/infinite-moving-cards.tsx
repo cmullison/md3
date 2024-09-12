@@ -95,19 +95,11 @@ export const InfiniteMovingCards = ({
           >
             <div
               className={cn(
-                "rounded-lg p-6 shadow-xl border h-full",
-                theme === "dark"
-                  ? "bg-gradient-to-br from-gray-800 to-gray-700 border-gray-600 hover:border-blue-400"
-                  : "bg-gradient-to-br from-gray-100 to-white border-gray-200 hover:border-blue-400"
+                "rounded-lg p-6 shadow-xl border h-full bg-gradient-to-br from-secondary/90 to-secondary/30 border-gray-600 hover:border-blue-400"
               )}
             >
               <blockquote>
-                <p
-                  className={cn(
-                    "italic mb-4",
-                    theme === "dark" ? "text-gray-300" : "text-gray-700"
-                  )}
-                >
+                <p className={cn("italic mb-4 text-primary")}>
                   &ldquo;{item.quote}&rdquo;
                 </p>
                 <div className="flex items-center">
@@ -117,13 +109,14 @@ export const InfiniteMovingCards = ({
                   <div>
                     <h4
                       className={cn(
-                        "text-lg font-semibold",
-                        theme === "dark" ? "text-white" : "text-gray-900"
+                        "text-lg font-semibold text-secondary-foreground"
                       )}
                     >
                       {item.name}
                     </h4>
-                    <p className="text-sm text-blue-500">{item.title}</p>
+                    <p className="text-sm text-secondary-foreground">
+                      {item.title}
+                    </p>
                   </div>
                 </div>
               </blockquote>
