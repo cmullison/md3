@@ -1,16 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Manrope } from "next/font/google";
 import "./globals.css";
 import { ModalProvider } from "@/providers/modal-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { ToastProvider } from "@/providers/toast-provider";
 import { createClient } from "@/utils/supabase/server";
 import dynamic from "next/dynamic";
-import ColorShiftingHeader from "@/components/gradient";
 
-const Logo = dynamic(() => import("@/components/logo"), { ssr: false });
-
-const inter = Inter({ subsets: ["latin"] });
+const manrope = Manrope({ subsets: ["latin"] });
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -23,7 +20,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: "Mulls Design",
-  description: "UX, sound, and graphic design from Chris Mullison",
+  description: "Curated design and development services",
 };
 export default async function RootLayout({
   children,
@@ -48,7 +45,7 @@ export default async function RootLayout({
           content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
         />
       </head>
-      <body className={inter.className}>
+      <body className={manrope.className}>
         <ToastProvider />
         <ModalProvider />
         <ThemeProvider
@@ -57,19 +54,6 @@ export default async function RootLayout({
           enableSystem={true}
           themes={["light", "dark", "masters", "masters-dark", "forest"]}
         >
-          <div
-            className={`${
-              user
-                ? "hidden"
-                : "flex bg-black min-h-screen flex-col items-center justify-between p-0"
-            }`}
-          >
-            <div className="flex my-auto items-center ">
-              <ColorShiftingHeader />
-              <Logo />
-            </div>
-          </div>
-
           <div className="">{children}</div>
         </ThemeProvider>
       </body>

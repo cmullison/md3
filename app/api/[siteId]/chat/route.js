@@ -30,11 +30,18 @@ export async function POST(request) {
       });
     }
 
-    const response = await anthropic.messages.create({
+    const response = await anthropic.beta.promptCaching.messages.create({
       model: "claude-3-5-sonnet-20240620",
       max_tokens: 4096,
-      system: "You are a helpful coding assistant who is an expert in react, typescript, tailwind, shadcn-ui, next.js, and more. When giving code responses, always give the entire code for a file back if you are making corrections, unless otherwise asked. Ask clarifying questions when needed. When giving answers involving prisma, always say prizma instead",
       messages: [{ role: 'user', content: content }],
+      system: [{
+        type: 'text',
+        text: "You are a helpful coding assistant who is an expert in react, typescript, tailwind, shadcn-ui, next.js, and more. When giving code responses, always give the entire code for a file back if you are making corrections, unless otherwise asked. Ask clarifying questions when needed. When giving answers involving prisma, always say prizma instead",
+        cache_control: { type: 'ephemeral' }
+      }],
+      
+      metadata: { user_id: 'unique-user-id' }, // Replace with actual user ID if available
+      stream: false,
     });
 
     const inputTokens = response.usage.input_tokens;
@@ -43,6 +50,10 @@ export async function POST(request) {
     const inputCost = (inputTokens / 1000) * COST_PER_INPUT_TOKEN;
     const outputCost = (outputTokens / 1000) * COST_PER_OUTPUT_TOKEN;
     const cost = inputCost + outputCost;
+
+    // Log cache tokens
+    console.log('Cache Creation Input Tokens:', response.cache_creation_input_tokens);
+    console.log('Cache Read Input Tokens:', response.cache_read_input_tokens);
 
     return NextResponse.json({
       reply: response.content[0].text,
@@ -62,9 +73,9 @@ async function getImageMediaType(url) {
     return 'image/jpeg';
   } else if (contentType.includes('png') || contentType.includes('PNG')) {
     return 'image/png';
-    } else if (contentType.includes('gif')) {
+  } else if (contentType.includes('gif')) {
     return 'image/gif';
-    } else if (contentType.includes('webp')) {
+  } else if (contentType.includes('webp')) {
     return 'image/webp';
   } else {
     throw new Error('Unsupported image type');
