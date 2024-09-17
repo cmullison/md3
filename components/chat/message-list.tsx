@@ -99,16 +99,18 @@ export default function MessageList({
                 message.sender === "user" ? "hidden" : ""
               }`}
             >
-              <AvatarFallback className="text-xs sm:text-sm">CL</AvatarFallback>
+              <AvatarFallback className="text-xs sm:text-sm p-1">
+                CL
+              </AvatarFallback>
             </Avatar>
             <div
               className={`max-w-[85%] sm:max-w-[70%] rounded-lg p-2 sm:p-3 ${
                 message.sender === "user"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-secondary text-secondary-foreground"
+                  ? "bg-primary/70 text-foreground"
+                  : "bg-secondary text-foreground"
               }`}
             >
-              <div className="text-xs sm:text-sm prose prose-sm dark:prose-invert max-w-none">
+              <div className="text-xs p-2 sm:text-sm prose prose-sm dark:prose-invert max-w-none [&>*]:text-inherit">
                 {renderMessageContent(message.text)}
               </div>
               {message.tempImage && (

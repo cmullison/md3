@@ -16,7 +16,7 @@ export interface ShimmerButtonProps
 const ShimmerButton = React.forwardRef<HTMLButtonElement, ShimmerButtonProps>(
   (
     {
-      shimmerColor = "#ffffff",
+      shimmerColor = "hsl(var(--cta-ring))",
       shimmerSize = "0.05em",
       shimmerDuration = "3s",
       borderRadius = "100px",

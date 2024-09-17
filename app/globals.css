@@ -25,18 +25,14 @@
     transform: translateY(20px);
   }
 }
+
+
 .prose-golf {
+  
   max-width: none;
   /* Allow the content to use the full width */
-  font-family: Arial, sans-serif;
-  /* Choose a readable font */
-  line-height: 1.6;
   /* Improve readability with increased line height */
-  color: var(--primary-foreground);
-  /* Use a dark color for better contrast */
-  padding: 1rem;
-  /* Add padding for better spacing around content */
-  margin: 1rem 0;
+  color: var(--foreground);
   /* Add vertical margin between paragraphs */
   text-align: left;
   /* Align text to the left for better readability */
@@ -66,18 +62,17 @@
     /* Justify text for a cleaner look */
   }
 
-  /* Lists */
+  /* Update the list item styles */
+  ol,
   ul,
-  ol {
-    margin: 0 0 1rem 1.5rem;
-    /* Add margin below and left for lists */
-    padding: 0;
-    /* Remove default padding */
+  li {
+    color: inherit;
+    /* This will make the list items inherit the color from their parent */
   }
 
-  li {
-    margin-bottom: 0.5rem;
-    /* Add margin between list items */
+  /* Ensure bullet points (::marker) also inherit the color */
+  li::marker {
+    color: inherit;
   }
 
   /* Links */
@@ -244,6 +239,7 @@ body,
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --active-link: 220 100% 50%;
+    --cta-ring: 221.2 83.2% 53.3%;
   }
 
   .dark {
@@ -279,6 +275,7 @@ body,
       --chart-4: 280 65% 60%;
       --chart-5: 340 75% 55%;
     --active-link: 220 100% 70%;
+    --cta-ring: 210 40% 98%;
   }
 
   .masters-dark {

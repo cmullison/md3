@@ -17,7 +17,7 @@ export default function Header({
       initial={{ y: -50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="container mx-auto py-6 flex justify-between items-center relative z-50"
+      className="container mx-auto px-4 py-6 flex justify-between items-center relative z-50"
     >
       <Logo />
       <div className="flex items-center">

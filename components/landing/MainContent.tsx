@@ -242,7 +242,7 @@ function CallToAction() {
         transition={{ duration: 0.3 }}
       >
         <ShimmerButton className="shadow-2xl">
-          <span className="bg-gradient-to-t from-royal-700 via-indigo-800 to-royal-700 text-white font-bold py-3 sm:py-4 px-6 sm:px-10 rounded-full text-lg sm:text-xl shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-royal-400 focus:ring-opacity-50 transition-all duration-300 ease-in-out">
+          <span className="m-0.5 bg-gradient-to-t from-primary via-indigo-800 to-primary text-white font-bold py-3 sm:py-4 px-6 sm:px-10 rounded-full text-lg sm:text-xl shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-royal-400 focus:ring-opacity-50 transition-all duration-300 ease-in-out">
             Get started
           </span>
         </ShimmerButton>

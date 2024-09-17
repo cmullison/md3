@@ -7,12 +7,12 @@ const config = {
     './components/**/*.{ts,tsx,js,jsx,mdx}',
     './app/**/*.{ts,tsx,js,jsx,mdx}',
     './src/**/*.{ts,tsx,js,jsx,mdx}',
+    './app/not-found.tsx',
   ],
   prefix: "",
   theme: {
     container: {
       center: true,
-      padding: "2rem",
       screens: {
         "2xl": "1400px",
       },
