@@ -5,9 +5,9 @@ export function HeroVideoDialogDemoTopInBottomOut() {
   const { resolvedTheme } = useTheme();
 
   const thumbnailSrc =
-    resolvedTheme === "dark"
-      ? "https://startup-template-sage.vercel.app/hero-dark.png"
-      : "https://startup-template-sage.vercel.app/hero-light.png";
+    resolvedTheme === "light"
+      ? "https://startup-template-sage.vercel.app/hero-light.png"
+      : "https://startup-template-sage.vercel.app/hero-dark.png";
 
   return (
     <div className="relative">

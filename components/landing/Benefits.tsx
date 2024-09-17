@@ -2,7 +2,16 @@ import { motion, useInView } from "framer-motion";
 import { FiTarget, FiTrendingUp, FiSmile, FiShield } from "react-icons/fi";
 import WordFadeIn from "./ui/WordFadeIn";
 import { useRef } from "react";
-import { useTheme } from "next-themes"; // Add this import
+import { useTheme } from "next-themes";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 interface Benefit {
   icon: React.ElementType;
@@ -38,16 +47,14 @@ const benefits: Benefit[] = [
 ];
 
 export default function Benefits() {
-  const { theme } = useTheme(); // Add this line
+  const { theme } = useTheme();
 
   return (
     <section className="py-24 w-full overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <WordFadeIn
           words="Elevate Your Online Presence"
-          className={`mb-16 ${
-            theme === "dark" ? "text-white" : "text-gray-900"
-          }`} // Update this line
+          className="mb-16 text-foreground"
           delay={0.2}
         />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
@@ -64,7 +71,7 @@ function BenefitCard({ benefit, index }: { benefit: Benefit; index: number }) {
   const Icon = benefit.icon;
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.5 });
-  const { theme } = useTheme(); // Add this line
+  const { theme } = useTheme();
 
   const slideDirection = index % 2 === 0 ? -100 : 100;
 
@@ -78,39 +85,28 @@ function BenefitCard({ benefit, index }: { benefit: Benefit; index: number }) {
       transition={{ duration: 0.8 }}
       className="relative group h-full"
     >
-      <div className="absolute -inset-0.5 bg-gradient-to-r from-royal-600 to-royal-400 rounded-lg opacity-0 group-hover:opacity-100 transition duration-300 blur-sm"></div>
-      <div
-        className={`relative ${
-          theme === "dark" ? "bg-black bg-opacity-70" : "bg-white"
-        } rounded-lg p-8 ring-1 ring-gray-900/5 shadow-lg h-full flex flex-col`}
-      >
-        <div className="flex items-center space-x-6 mb-6">
-          <Icon className="w-12 h-12 text-royal-400 flex-shrink-0" />
-          <h3
-            className={`text-2xl font-bold ${
-              theme === "dark" ? "text-white" : "text-gray-900"
-            }`}
-          >
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-primary to-primary/80 rounded-lg opacity-0 group-hover:opacity-100 transition duration-300 blur-sm"></div>
+      <Card className="relative h-full">
+        <CardHeader className="flex flex-row items-center space-y-0 pb-2">
+          <Icon className="w-12 h-12 text-primary flex-shrink-0 mr-6" />
+          <CardTitle className="text-2xl font-bold text-foreground">
             {benefit.title}
-          </h3>
-        </div>
-        <p
-          className={`${
-            theme === "dark" ? "text-gray-300" : "text-gray-600"
-          } leading-relaxed flex-grow`}
-        >
-          {benefit.description}
-        </p>
-        <div className="mt-8 flex justify-end">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-4 py-2 bg-royal-500 text-white rounded-md font-semibold text-sm transition-colors duration-300 hover:bg-royal-600"
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <CardDescription className={`text-muted-foreground leading-relaxed`}>
+            {benefit.description}
+          </CardDescription>
+        </CardContent>
+        <CardFooter className="flex justify-end">
+          <Button
+            variant="default"
+            className="bg-primary/80 text-muted-secondary hover:bg-primary/90 transition-transform duration-300 hover:scale-110"
           >
             Learn More
-          </motion.button>
-        </div>
-      </div>
+          </Button>
+        </CardFooter>
+      </Card>
     </motion.div>
   );
 }

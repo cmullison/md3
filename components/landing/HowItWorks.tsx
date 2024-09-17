@@ -33,29 +33,13 @@ function StepCard({ step, index }: { step: any; index: number }) {
         isInView ? { opacity: 1, x: 0, y: 0 } : { opacity: 0, x: -50, y: 50 }
       }
       transition={{ duration: 0.5, delay: index * 0.2 }}
-      className={`p-6 rounded-lg shadow-lg ${
-        theme === "dark"
-          ? "bg-opacity-5 bg-white border border-white border-opacity-20"
-          : "bg-white border border-gray-200"
-      } backdrop-blur-sm`}
+      className={`p-6 rounded-lg shadow-lg bg-white/5 border border-foreground/20 backdrop-blur-sm`}
     >
-      <div
-        className={`text-5xl font-bold mb-4 ${
-          theme === "dark" ? "text-royal-400" : "text-royal-600"
-        }`}
-      >
-        {index + 1}
-      </div>
-      <h3
-        className={`text-2xl font-semibold mb-2 ${
-          theme === "dark" ? "text-white" : "text-gray-800"
-        }`}
-      >
+      <div className={`text-5xl font-bold mb-4 text-primary`}>{index + 1}</div>
+      <h3 className={`text-2xl font-semibold mb-2 text-foreground`}>
         {step.title}
       </h3>
-      <p className={theme === "dark" ? "text-royal-100" : "text-gray-600"}>
-        {step.description}
-      </p>
+      <p className="text-muted-foreground">{step.description}</p>
     </motion.div>
   );
 }

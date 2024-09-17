@@ -52,8 +52,8 @@ export default function FAQ() {
 
   return (
     <section className="py-16">
-      <div className="container mx-auto px-4">
-        <h2 className="text-4xl font-bold mb-12 text-center dark:text-white text-gray-900">
+      <div className="mx-auto px-4">
+        <h2 className="text-4xl font-bold mb-12 text-center text-foreground">
           Frequently Asked Questions
         </h2>
         <div className="space-y-4">
@@ -106,24 +106,15 @@ function FAQItem({
       initial={{ opacity: 0, y: 20 }}
       animate={controls}
       transition={{ duration: 0.5, delay: 0.1 }}
-      className="border border-gray-200 dark:border-royal-700 rounded-lg overflow-hidden shadow-sm"
+      className="border border-muted-foreground/20 rounded-lg overflow-hidden shadow-sm"
     >
       <motion.button
-        className="w-full text-left p-4 focus:outline-none transition-colors duration-300"
+        className={`w-full text-left p-4 focus:outline-none transition-colors duration-300 ${
+          activeIndex === index ? "bg-primary" : "bg-muted"
+        }`}
         onClick={() => setActiveIndex(activeIndex === index ? null : index)}
-        initial={false}
-        animate={{
-          backgroundColor:
-            activeIndex === index
-              ? theme === "dark"
-                ? "#1e40af"
-                : "#e0e7ff"
-              : theme === "dark"
-              ? "rgba(14, 27, 62, 0.8)"
-              : "white",
-        }}
       >
-        <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+        <h3 className="text-xl font-semibold text-foreground">
           {faq.question}
         </h3>
       </motion.button>
@@ -138,7 +129,7 @@ function FAQItem({
               collapsed: { opacity: 0, height: 0 },
             }}
             transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
-            className="bg-gray-50 dark:bg-royal-900 overflow-hidden"
+            className="bg-background overflow-hidden"
           >
             <motion.div
               variants={{
@@ -148,7 +139,7 @@ function FAQItem({
               transition={{ duration: 0.4 }}
               className="p-4"
             >
-              <p className="text-gray-700 dark:text-royal-100">{faq.answer}</p>
+              <p className="text-foreground">{faq.answer}</p>
             </motion.div>
           </motion.div>
         )}

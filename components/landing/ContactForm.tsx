@@ -78,13 +78,13 @@ export default function ContactForm({ onSubmitSuccess }: ContactFormProps) {
             style={{
               backgroundImage: `
               linear-gradient(135deg, 
-                hsl(var(--foreground) / 0.05) 0%, 
-                hsl(var(--foreground) / 0.025) 25%, 
-                hsl(var(--foreground) / 0.05) 50%, 
-                hsl(var(--foreground) / 0.025) 75%, 
-                hsl(var(--foreground) / 0.05) 100%
+                hsl(var(--primary) / 0.05) 0%, 
+                hsl(var(--primary) / 0.25) 25%, 
+                hsl(var(--primary) / 0.05) 50%, 
+                hsl(var(--primary) / 0.025) 75%, 
+                hsl(var(--primary) / 0.2) 100%
               ),
-              radial-gradient(hsl(var(--foreground) / 0.1) 1px, transparent 1px)
+              radial-gradient(hsl(var(--primary) / 0.1) 1px, transparent 1px)
             `,
               backgroundSize: "400% 400%, 20px 20px",
               animation: "moveGradient 15s ease infinite",
@@ -141,7 +141,7 @@ export default function ContactForm({ onSubmitSuccess }: ContactFormProps) {
               whileTap={{ scale: 0.95 }}
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-gradient-to-r from-primary to-primary/80 text-white font-bold py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-all duration-300"
+              className="w-full bg-primary/70 text-muted-secondary font-bold py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-all duration-300"
             >
               {isSubmitting ? <LoadingSpinner /> : "Send Message"}
             </motion.button>

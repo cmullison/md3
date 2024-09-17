@@ -143,7 +143,7 @@ export default function MainContent() {
           )}
         </div>
 
-        <div className="relative z-10 flex flex-col items-center">
+        <div className="relative text-foreground z-10 flex flex-col items-center">
           <motion.h2
             initial={{ y: -50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -156,7 +156,7 @@ export default function MainContent() {
             <span className="relative inline-block">
               <span className="absolute -inset-1 bg-gradient-to-r from-primary to-primary rounded-lg blur-lg opacity-65 animate-pulse"></span>
               <span
-                className={`relative text-transparent bg-clip-text bg-gradient-to-b from-royal-500 to-secondary-foreground`}
+                className={`relative text-transparent bg-clip-text bg-gradient-to-b from-primary to-foreground`}
               >
                 Placeholder
               </span>

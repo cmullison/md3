@@ -29,7 +29,7 @@ const config = {
         'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
         grid: 'linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px)',
         'grid-mask': 'radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.7) 50%, transparent 100%), linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.1) 75%, rgba(255,255,255,0.1))',
-        'noise': "url('/path-to-your-noise-texture.png')",
+        'noise': "url('/')",
       },
       backgroundSize: {
         grid: '20px 20px'

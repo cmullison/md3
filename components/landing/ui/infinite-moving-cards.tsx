@@ -3,6 +3,13 @@
 import { cn } from "@/lib/utils";
 import React, { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardFooter,
+} from "@/components/ui/card";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 export const InfiniteMovingCards = ({
   items,
@@ -93,34 +100,30 @@ export const InfiniteMovingCards = ({
             key={item.name}
             className="flex-shrink-0 w-[350px] md:w-[450px] transform transition duration-300 hover:scale-105"
           >
-            <div
-              className={cn(
-                "rounded-lg p-6 shadow-xl border h-full bg-gradient-to-br from-secondary/90 to-secondary/30 border-gray-600 hover:border-blue-400"
-              )}
-            >
-              <blockquote>
-                <p className={cn("italic mb-4 text-primary")}>
-                  &ldquo;{item.quote}&rdquo;
-                </p>
+            <Card className="h-full bg-gradient-to-br from-secondary/90 to-secondary/30 border-foreground/20 hover:border-primary/60">
+              <CardHeader>
+                <blockquote>
+                  <p className={cn("italic mb-4 text-primary")}>
+                    &ldquo;{item.quote}&rdquo;
+                  </p>
+                </blockquote>
+              </CardHeader>
+              <CardFooter>
                 <div className="flex items-center">
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full mr-4 flex items-center justify-center text-white text-xl font-bold">
-                    {item.name[0]}
-                  </div>
+                  <Avatar className="w-12 h-12 mr-4">
+                    <AvatarFallback className="bg-gradient-to-r from-blue-400 to-purple-500 text-white text-xl font-bold">
+                      {item.name[0]}
+                    </AvatarFallback>
+                  </Avatar>
                   <div>
-                    <h4
-                      className={cn(
-                        "text-lg font-semibold text-secondary-foreground"
-                      )}
-                    >
+                    <h4 className={cn("text-lg font-semibold text-foreground")}>
                       {item.name}
                     </h4>
-                    <p className="text-sm text-secondary-foreground">
-                      {item.title}
-                    </p>
+                    <p className="text-sm text-foreground">{item.title}</p>
                   </div>
                 </div>
-              </blockquote>
-            </div>
+              </CardFooter>
+            </Card>
           </li>
         ))}
       </ul>
