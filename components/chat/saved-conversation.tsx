@@ -13,7 +13,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
-import { Menu, MessageSquare } from "lucide-react";
+import { Menu, MessageSquare, PlusCircle } from "lucide-react";
 import { ChatList } from "./chat-list";
 import { Button } from "../ui/button";
 import { updateTitle } from "@/app/actions";
@@ -22,7 +22,8 @@ import { debounce } from "lodash";
 import { ScrollArea } from "../ui/scroll-area";
 import { Input } from "../ui/input";
 import AuthButtonClient from "../nav/auth-button-client";
-
+import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 interface Message {
   id: string;
   role: "user" | "assistant";
@@ -45,7 +46,8 @@ interface SavedChatsProps {
 
 export default function SavedChats({ conversation }: SavedChatsProps) {
   const profile = useProfile();
-
+  const params = useParams();
+  const router = useRouter();
   const [conversationTitle, setConversationTitle] = useState(
     conversation?.title || "New Conversation"
   );
@@ -179,16 +181,16 @@ export default function SavedChats({ conversation }: SavedChatsProps) {
     <>
       <div className="flex flex-col">
         <div className="bg-background text-foreground py-2 px-4 flex items-center justify-between">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="outline" size="icon" className="md:hidden">
-                <Menu className="h-4 w-4" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-64 p-0">
-              <Sidebar />
-            </SheetContent>
-          </Sheet>
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex items-center space-x-2"
+            onClick={() => router.push(`/${params.siteId}/chat`)}
+          >
+            <PlusCircle className="h-4 w-4" />
+            <span className="hidden sm:inline">New Chat</span>
+          </Button>
+
           <div className="flex-1 text-center px-4">
             {isEditingTitle ? (
               <input
