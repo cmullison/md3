@@ -11,7 +11,7 @@ export default async function AuthLayout({
     data: { user },
   } = await supabase.auth.getUser();
   if (user) {
-    return redirect("/");
+    return redirect("/redirect");
   }
   return <div className="flex items-center justify-center">{children}</div>;
 }

@@ -60,5 +60,5 @@ export async function GET(request: Request) {
   }
 
   // URL to redirect to after sign up process completes
-  return redirect(`/`);
+  return redirect(`/redirect`);
 }

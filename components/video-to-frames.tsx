@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef, useEffect, DragEvent } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import Image from "next/image";
 import { Loader2, Upload, Play } from "lucide-react";
@@ -179,29 +179,12 @@ const VideoToFrames: React.FC<VideoToFramesProps> = ({ frameInterval }) => {
     }
   };
 
-  const handleDragOver = (e: DragEvent<HTMLLabelElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
-
-  const handleDrop = (e: DragEvent<HTMLLabelElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    const files = e.dataTransfer.files;
-    if (files && files.length > 0) {
-      handleFileSelection(files[0]);
-    }
-  };
-
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
-    if (file) {
-      handleFileSelection(file);
-    }
-  };
+    if (!file) return;
 
-  const handleFileSelection = (file: File) => {
     setIsUploading(true);
     setIsVideoReady(false);
 
@@ -238,8 +221,6 @@ const VideoToFrames: React.FC<VideoToFramesProps> = ({ frameInterval }) => {
             <label
               htmlFor="dropzone-file"
               className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
-              onDragOver={handleDragOver}
-              onDrop={handleDrop}
             >
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
                 <Upload className="w-10 h-10 mb-3 text-gray-400" />
@@ -320,6 +301,7 @@ const VideoToFrames: React.FC<VideoToFramesProps> = ({ frameInterval }) => {
           <p className="text-center mt-2">
             Analyzing your swing... {Math.round(loadingProgress)}%
           </p>
+          <p className="text-center mt-2">This may take up to a minute.</p>
         </div>
       )}
 
