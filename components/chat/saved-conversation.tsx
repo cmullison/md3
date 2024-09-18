@@ -250,7 +250,7 @@ export default function SavedChats({ conversation }: SavedChatsProps) {
               <div
                 className={`max-w-[85%] sm:max-w-[70%] rounded-lg p-2 sm:p-3 ${
                   message.role === "user"
-                    ? "bg-primary text-primary-foreground"
+                    ? "bg-primary/60 text-foreground"
                     : "bg-secondary text-secondary-foreground"
                 }`}
               >

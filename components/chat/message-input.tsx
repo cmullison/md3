@@ -37,7 +37,7 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => {
         <Textarea
           ref={textareaRef}
           value={message}
-          placeholder="Type your message..."
+          placeholder="Write a react component that accepts a prop and returns a div..."
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
           className="pr-12 resize-none min-h-[60px]"

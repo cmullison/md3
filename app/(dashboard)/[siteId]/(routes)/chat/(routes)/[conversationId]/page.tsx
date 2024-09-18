@@ -94,9 +94,6 @@ export default function Page() {
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
       {/* Desktop Sidebar */}
-      <aside className="hidden md:block w-64 p-4 border-r bg-background">
-        <Sidebar />
-      </aside>
 
       {/* Main content */}
       <main className="flex-1 p-2 overflow-auto lg:p-2">

@@ -106,7 +106,7 @@ export default function MessageList({
             <div
               className={`max-w-[85%] sm:max-w-[70%] rounded-lg p-2 sm:p-3 ${
                 message.sender === "user"
-                  ? "bg-primary/70 text-foreground"
+                  ? "bg-primary/60 text-foreground"
                   : "bg-secondary text-foreground"
               }`}
             >

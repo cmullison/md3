@@ -184,9 +184,9 @@ body,
 
 .code-block pre {
   margin: 0;
-  white-space: pre-wrap;
   word-wrap: break-word;
 }
+
 
 .token-info {
   font-size: 0.8rem;
