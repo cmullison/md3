@@ -80,10 +80,10 @@ export const signUp = async (formData: FormData) => {
     } else {
     }
 
-    return redirect("/redirect");
+    return { success: true };
   } catch (error) {
     console.error(error);
-    return new NextResponse("Internal Server Error", { status: 500 });
+    return { success: false, error: "An error occurred during sign up" };
   }
 };
 

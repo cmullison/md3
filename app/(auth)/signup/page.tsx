@@ -18,9 +18,14 @@ const SignUpPage: React.FC<SignUpPageProps> = ({ searchParams }) => {
   const handleSignUp = async (formData: FormData) => {
     try {
       const result = await signUp(formData);
-      if (result.ok) {
-        router.push("/redirect");
+      if ("success" in result) {
+        if (result.success) {
+          router.push("/redirect");
+        } else {
+          setError(result.error || "Sign up failed. Please try again.");
+        }
       } else {
+        // Handle NextResponse case if needed
         setError("Sign up failed. Please try again.");
       }
     } catch (err) {
