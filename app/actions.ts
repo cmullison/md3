@@ -80,7 +80,7 @@ export const signUp = async (formData: FormData) => {
     } else {
     }
 
-    return redirect("/");
+    return redirect("/redirect");
   } catch (error) {
     console.error(error);
     return new NextResponse("Internal Server Error", { status: 500 });
